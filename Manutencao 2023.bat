@@ -100,14 +100,15 @@ echo 				[...............................................]
 ECHO 				[	5.Reconfigurar Rede			]
 ECHO 				[	6.Atualizar Politicas de Grupo		]
 ECHO 				[	7.Informacoes da Rede			]
+ECHO 				[	8.Habilitar/Desabilitar Rede		]
 echo 				[...............................................]
-ECHO 				[	8.LogOff de Usuarios			]
+ECHO 				[	9.LogOff de Usuarios			]
 echo 				[...............................................]
-ECHO 				[	9.Desinstalar JAVA			]
-ECHO 				[	10.Liberar Impressao			]
+ECHO 				[	10.Desinstalar JAVA			]
+ECHO 				[	11.Liberar Impressao			]
 echo 				[...............................................]
-ECHO 				[	11.Info do PC				]
-ECHO 				[	12.WINDOWS - PAINEL CONTROLE		]
+ECHO 				[	12.Info do PC				]
+ECHO 				[	13.WINDOWS - PAINEL CONTROLE		]
 echo 				[...............................................]
 ECHO 				[	0.Sair					]
 ECHO 				[						]
@@ -129,12 +130,13 @@ if %userinp% equ 4 GOTO ClearBkp
 if %userinp% equ 5 GOTO ConfigLan
 if %userinp% equ 6 GOTO FuncgpupRede
 if %userinp% equ 7 GOTO infoRedeLan
-if %userinp% equ 8 GOTO LogOffUser
-if %userinp% equ 9 GOTO UninstalJava
-if %userinp% equ 10 GOTO SpoolImp
-if %userinp% equ 11 GOTO infosysbraz
-if %userinp% equ 12 GOTO MenuWinProgram
-if %userinp% geq 13 GOTO MenuPri
+if %userinp% equ 8 GOTO DISCONADAPTERLANETher
+if %userinp% equ 9 GOTO LogOffUser
+if %userinp% equ 10 GOTO UninstalJava
+if %userinp% equ 11 GOTO SpoolImp
+if %userinp% equ 12 GOTO infosysbraz
+if %userinp% equ 13 GOTO MenuWinProgram
+if %userinp% geq 14 GOTO MenuPri
 
 ) else (
 ping -n 1 localhost >nul
@@ -1165,6 +1167,122 @@ echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
 :: #######################################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:: #######################################################################################################
+:DISCONADAPTERLANETher
+cls
+COLOR A0
+ECHO.
+echo  Listando adaptadores de Rede (Internet)
+netsh interface show interface
+echo ==========================================================================
+
+goto IniNETVarCon
+
+:IniNETVarCon
+set /p varCharAdapNetCon=Nome da interface de Rede: 
+
+for /f "tokens=4" %%a in ('netsh interface show interface ^| find "%varCharAdapNetCon%"') do (set variIPNETCON=%%a)
+
+if "%varCharAdapNetCon%"== "" (
+	goto endNetCon
+) else (
+	if "%variIPNETCON%"== "" (
+		set varCharAdapNetCon=
+		goto IniNETVarCon
+	) ELSE (
+		echo.
+		echo.
+		echo 			INICIANDO PROCEDIMENTO "%varCharAdapNetCon%" adapter. AGUARDE...
+		goto FullNetCon
+))
+
+
+
+
+:Disadlingadapter
+color 4f
+echo.
+netsh interface set interface "%varCharAdapNetCon%" disable
+echo "%varCharAdapNetCon%" adapter Disabilitado.
+echo ==========================================================================
+timeout /t 5 >nul
+goto endNetCon
+
+
+
+
+
+:Enablingadapter
+color 0A
+echo.
+netsh interface set interface "%varCharAdapNetCon%" enable
+echo "%varCharAdapNetCon%" adapter Habilitado.
+echo ==========================================================================
+goto endNetCon
+
+
+
+
+
+:FullNetCon
+echo ------------------------------------------------------------------------
+netsh interface show interface "%varCharAdapNetCon%" | find "Desconectado" > nul && (
+  echo Adaptador Desabilitado - Estamos Habilitando Dispositivo - "%varCharAdapNetCon%"
+  netsh interface set interface "%varCharAdapNetCon%" enabled
+  goto endNetCon
+) || (
+  echo Adaptador Habilitado - Estamos Desabilitando o Dispositivo - "%varCharAdapNetCon%"
+  netsh interface set interface "%varCharAdapNetCon%" disabled > nul
+	IF ERRORLEVEL 1 (
+  		color 4f
+		ECHO ATENCAO.
+		echo ACONTECEU ALGUM ERRO
+	) ELSE (
+	timeout /t 5 >nul
+	GOTO :Enablingadapter
+	)
+)
+
+:endNetCon
+echo.
+echo ------------------------------------------------------------------------
+echo.
+echo Procedimento Concluido - Finalizando...
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ping -n 1 localhost >nul
+echo.
+echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
+pause > nul
+GOTO MenuPri
+:: #######################################################################################################
+
+
+
+
+
+
+
+
+
+
 
 
 
