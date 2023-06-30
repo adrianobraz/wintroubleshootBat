@@ -790,11 +790,127 @@ GOTO MenuPri
 cls
 COLOR A0
 
-echo LogOff Usuarios
+set vlcUserNomeTempT2=%username:~0,-3%
+goto fID_UserDigIniMenu
 
-query session >session.txt  
-for /f "skip=2 tokens=3," %%i in (session.txt) DO logoff %%i  
-del session.txt
+
+
+
+
+
+
+
+
+:fID_UserDigIniMenu
+cls
+echo.
+echo.
+echo.
+echo ......................... Usuarios Logados .......................
+echo ------------------------------------------------------------------
+
+qwinsta
+
+echo ==================================================================
+echo.
+echo.
+echo 	Digite o Id para Deslogar:
+
+set vlnID_UserDig=
+set /p vlnID_UserDig=Digite o ID: 
+
+set vlcUserNome=
+FOR /f "tokens=1" %%k IN ('qwinsta ^| find "%vlnID_UserDig%"') DO (set vlcUserNome=%%k)
+
+if "%vlcUserNome%" == ">console" (
+	FOR /f "tokens=2" %%k IN ('qwinsta ^| find "%vlnID_UserDig%"') DO (set vlcUserNome=%%k)
+)
+
+IF "%vlcUserNome%" == "%vlcUserNomeTempT2%" (
+	set vlcUserNome=%username%
+)
+
+
+set /a varCheck_IDUser=%vlnID_UserDig%
+goto fID_UserDigValLogOFf
+
+
+
+
+
+
+
+
+
+
+
+
+
+:fID_UserDigValLogOFf
+if %varCheck_IDUser% == %vlnID_UserDig% (
+	
+	if "" == "%vlcUserNome%" (
+		echo ID Usuario nao Encontrado. Logon Invalido - "%vlnID_UserDig%" - "%vlcUserNome%"
+		echo.
+		pause > nul
+		goto fID_UserDigIniMenu
+	) else (
+		cls
+		echo.
+		echo.
+		echo ................ Usuario Encontrado .......................
+		echo.
+		echo 	ID "%varCheck_IDUser%"
+		echo 	Usuario "%vlcUserNome%"
+		echo.
+		echo Deseja Realmente fazer logoff?
+		echo.
+		echo.
+
+		pause
+		
+		if "%username%" == "%vlcUserNome%" (
+			echo.
+			echo --------------------------------------------------------------------
+			echo 	Usuario nao pode fazer logoff. 
+			echo 	ID "%varCheck_IDUser%" - Usuario "%vlcUserNome%"
+			echo.
+			echo.
+			pause
+			goto fID_UserDigIniMenu
+		) else (
+			echo ------------------------------------------------
+			echo 	Aguarde Fazendo LogOFF
+			echo 	ID "%varCheck_IDUser%" - Usuario "%vlcUserNome%"
+			logoff %varCheck_IDUser%
+			echo ................................................
+			echo.
+			echo LogOff Concluido - ID "%varCheck_IDUser%" - "%vlcUserNome%"
+			echo.
+			echo.
+			pause
+			goto fID_UserDigIniMenu
+		)
+	)
+) else (
+	echo.
+	echo OPCAO INVALIDA. TENTE NOVAMENTE
+	echo OPCAO INVALIDA. TENTE NOVAMENTE
+	goto fID_UserDigEND
+)
+
+
+
+
+
+
+
+
+
+
+:fID_UserDigEND
+echo.
+echo.
 echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo.
 echo.
