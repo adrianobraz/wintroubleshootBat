@@ -10,12 +10,12 @@ ECHO.
 ECHO.
 ECHO.
 ECHO.
-echo 	+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ECHO 	+												+
-echo 	+		                 MANUTENCAO E RECUPERACAO DO WINDOWS				+
-echo 	+	     M A N U T E N C A O   E   R E C U P E R A C A O   D O   W I N D O W S		+
-ECHO 	+												+
-echo 	+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo 	+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ECHO 	+											+
+echo 	+			MANUTENCAO E RECUPERACAO DO WINDOWS				+
+echo 	+	M A N U T E N C A O   E   R E C U P E R A C A O   D O   W I N D O W S		+
+ECHO 	+											+
+echo 	+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 ECHO.
 Echo 					Aguarde ou Pressione qualquer tecla
@@ -31,25 +31,25 @@ if %errorlevel%==0 (
 ) else (
 color 47
 echo.
-echo 	   A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O
-echo 	   A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O
-echo 	   ########################################################################################
-echo 	   #                                                                                      #
-echo 	   #                                                                                      #
-echo 	   #                                                                                      #
-echo 	   #                                                                                      #
-echo 	   #                V O C E   N A O   E   A D M I N I S T R A D O R                       #
-echo 	   #                                                                                      #
-echo 	   #                        Voce deve executar como Administrador                         #
-echo 	   #                         Clique com o botao direito do mouse                          #
-echo 	   #                      Selecione  ^'Executar como administrador'^                        #
-echo 	   #                                 e tente novamente.                                   #
-echo 	   #                                                                                      #
-echo 	   #                                                                                      #
-echo 	   #                                                                                      #
-echo 	   #                                                                                      #
-echo 	   #                                                                                      #
-echo 	   ########################################################################################
+echo 	   	A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O
+echo 	   	A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O
+echo 	   ######################################################################################
+echo 	   #											#
+echo 	   #											#
+echo 	   #											#
+echo 	   #											#
+echo 	   #			V O C E   N A O   E   A D M I N I S T R A D O R			#
+echo 	   #											#
+echo 	   #			Voce deve executar como Administrador				#
+echo 	   #			Clique com o botao direito do mouse				#
+echo 	   #			Selecione  ^'Executar como administrador'^			#
+echo 	   #			e tente novamente.						#
+echo 	   #											#
+echo 	   #											#
+echo 	   #											#
+echo 	   #											#
+echo 	   #											#
+echo 	   ######################################################################################
 echo 	   A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O
 echo 	   A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O
 echo.
@@ -78,40 +78,43 @@ GOTO MenuPri
 
 
 
-:: #######################################################################################################
+:: #######################################################################################
 :MenuPri
 cls
 color 6f
 echo.
-ECHO 	    ##### MENU ##### MENU ###### MENU ###### MENU ####### MENU ####### MENU ####### MENU ####
-echo 	+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ECHO 	+												+
-echo 	+		                 MANUTENCAO E RECUPERACAO DO WINDOWS				+
-echo 	+	     M A N U T E N C A O   E   R E C U P E R A C A O   D O   W I N D O W S		+
-ECHO 	+												+
-echo 	+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ECHO 	    ##### MENU ##### MENU ###### MENU ###### MENU ####### MENU ####### MENU #####
+echo 	+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ECHO 	+										+
+echo 	+		        MANUTENCAO E RECUPERACAO DO WINDOWS			+
+echo 	+	M A N U T E N C A O   E   R E C U P E R A C A O   D O   W I N D O W S	+
+ECHO 	+										+
+echo 	+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo.
 echo 				[----------------MENU DE OPCOES-----------------]
-ECHO 				[	1.Limpar Lixeira			]
-ECHO 				[	2.Limpar Arquivos Temporarios		]
-ECHO 				[	3.Limpar Arquivos de Internet		]
-ECHO 				[	4.Limpar Arquivos de Backup		]
+ECHO 				[	1.Prompt de Comando			]
 echo 				[...............................................]
-ECHO 				[	5.Reconfigurar Rede			]
-ECHO 				[	6.Atualizar Politicas de Grupo		]
-ECHO 				[	7.Informacoes da Rede			]
-ECHO 				[	8.Habilitar/Desabilitar Rede		]
+ECHO 				[	2.Atualizar Politicas de Grupo		]
+ECHO 				[	3.Reconfigurar Rede			]
+echo 				[...............................................]
+ECHO 				[	4.Info Lan Local ou IP			]
+ECHO 				[	5.Habilitar/Desabilitar Rede		]
+echo 				[...............................................]
+ECHO 				[	6.Limpar Lixeira			]
+ECHO 				[	7.Limpar Arquivos Temporarios		]
+ECHO 				[	8.Limpar Arquivos de Internet		]
 echo 				[...............................................]
 ECHO 				[	9.LogOff de Usuarios			]
 echo 				[...............................................]
 ECHO 				[	10.Desinstalar JAVA			]
 ECHO 				[	11.Liberar Impressao			]
+ECHO 				[	12.Limpar Arquivos de Backup		]
 echo 				[...............................................]
-ECHO 				[	12.Info do PC				]
-ECHO 				[	13.WINDOWS - PAINEL CONTROLE		]
+ECHO 				[	13.Info do PC				]
+echo 				[...............................................]
+ECHO 				[	14.WINDOWS - PAINEL CONTROLE		]
 echo 				[...............................................]
 ECHO 				[	0.Sair					]
-ECHO 				[						]
 echo 				[###############################################]
 ECHO.
 
@@ -123,20 +126,21 @@ set /a varCheck=%userinp%
 if %varCheck% == %userinp% (
 
 if %userinp% equ 0 GOTO SairPrograma
-if %userinp% equ 1 GOTO ClearLixo
-if %userinp% equ 2 GOTO ClearTemp
-if %userinp% equ 3 GOTO ClearInt
-if %userinp% equ 4 GOTO ClearBkp
-if %userinp% equ 5 GOTO ConfigLan
-if %userinp% equ 6 GOTO FuncgpupRede
-if %userinp% equ 7 GOTO infoRedeLan
-if %userinp% equ 8 GOTO DISCONADAPTERLANETher
+if %userinp% equ 1 GOTO CallPromptCMDStart
+if %userinp% equ 2 GOTO FuncgpupRede
+if %userinp% equ 3 GOTO ConfigLan
+if %userinp% equ 4 GOTO infoRedeLan
+if %userinp% equ 5 GOTO DISCONADAPTERLANETher
+if %userinp% equ 6 GOTO ClearLixo
+if %userinp% equ 7 GOTO ClearTemp
+if %userinp% equ 8 GOTO ClearInt
 if %userinp% equ 9 GOTO LogOffUser
 if %userinp% equ 10 GOTO UninstalJava
 if %userinp% equ 11 GOTO SpoolImp
-if %userinp% equ 12 GOTO infosysbraz
+if %userinp% equ 12 GOTO ClearBkp
+if %userinp% equ 13 GOTO infosysbraz
 if %userinp% equ 13 GOTO MenuWinProgram
-if %userinp% geq 14 GOTO MenuPri
+if %userinp% geq 15 GOTO MenuPri
 
 ) else (
 ping -n 1 localhost >nul
@@ -148,7 +152,7 @@ echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
 )
-:: #######################################################################################################
+:: #######################################################################################
 
 
 
@@ -163,13 +167,13 @@ GOTO MenuPri
 
 
 
-:: #######################################################################################################
+:: ##################################################################################
 :ClearTemp
 cls
 COLOR A0
 ECHO.
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo ******************** PASTA TEMP DOS USUÁRIOS ********************
 
 echo Apaga todos arquivos da pasta Temp de todos os usuários, mantendo das pastas
@@ -209,39 +213,39 @@ del C:\Windows\SoftwareDistribution\*.log /s /q
 del C:\Windows\Microsoft.NET\*.log /s /q
 for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\OneDrive\setup\logs\*.log /s /q
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Limpando os arquivos temporarios do usuario atual...
 
 del /F /Q "%TEMP%\*.*"
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Limpando os arquivos temporarios do sistema...
 del /F /Q "%SystemRoot%\Temp\*.*"
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Limpando os arquivos temporarios da Internet...
 del /F /Q "%USERPROFILE%\AppData\Local\Microsoft\Windows\INetCache\*.*"
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Limpando os arquivos temporarios de logs do Windows...
 del /F /Q "%SystemRoot%\Logs\*.*"
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Limpando os arquivos temporarios do Windows Update...
 del /F /Q "%SystemRoot%\SoftwareDistribution\Download\*.*"
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Limpando os arquivos temporarios do Windows Error Reporting...
 del /F /Q "%SystemRoot%\WinSxS\ManifestCache\*.*"
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Deletando arquivos de Distribuicao
 
 rd /s /q "%windir%\softwaredistribution"
 net start wuauserv
 
 echo Arquivos de Distribuicao Concluido
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo A limpeza de arquivos temporarios
 del /s /f /q "%WinDir%\Temp\*.*"
 del /s /f /q "%Temp%\*.*"
@@ -252,7 +256,7 @@ del /s /f /q "%USERPROFILE%\Recent\*.*"
 del /s /f /q "%USERPROFILE%\Cookies\*.*"
 del /s /f /q "%HomePath%\AppData\Local\Temp"
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ping -n 1 localhost >nul
 
 rd /s /q "%USERPROFILE%\Local Settings\Temp"
@@ -266,7 +270,7 @@ echo A limpeza de arquivos temporarios foi concluida.
 echo ----------------------------------
 ping -n 1 localhost >nul
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Arquivos Prefetch
 
 del /s /f /q "%WinDir%\Prefetch\*.*"
@@ -277,19 +281,19 @@ rd /s /q "%WinDir%\Prefetch"
 
 echo Arquivos Prefetch Concluido
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 echo ******************** ADOBE MEDIA CACHE FILES ********************
 
 for /d %%F in (C:\Users\*) do del %%F\AppData\Roaming\Adobe\Common\"Media Cache files"\*.* /s /q
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ping -n 1 localhost >nul
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
-:: #######################################################################################################
+:: ############################################################################################
 
 
 
@@ -306,12 +310,12 @@ GOTO MenuPri
 
 
 
-:: #######################################################################################################
+:: #######################################################################################
 :ClearInt
 cls
 COLOR A0
 ECHO.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Limpando os arquivos temporarios da Internet...
 
 echo ******************** ARQUIVOS DE LOG DO WINDOWS E IE ********************
@@ -424,7 +428,7 @@ del /q /s /f "%USERPROFILE%\AppData\Local\Microsoft\Internet Explorer\*.*"
 del /q /s /f "%USERPROFILE%\AppData\Local\Microsoft\Windows\History\*.*"
 
 echo A limpeza dos arquivos temporarios da Internet foi concluida.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ping -n 1 localhost >nul
 
 echo Limpando os arquivos temporarios do Google Chrome...
@@ -443,14 +447,14 @@ rd /s /q "%USERPROFILE%\AppData\Local\Google\Chrome\User Data\*.*"
 rd /s /q "%LocalAppData%\Google\Chrome\User Data\Default\Cache"
 
 echo A limpeza dos arquivos temporarios do Google Chrome foi concluida.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ping -n 1 localhost >nul
 echo.
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
-:: #######################################################################################################
+:: ##########################################################################################
 
 
 
@@ -469,13 +473,13 @@ GOTO MenuPri
 
 
 
-:: #######################################################################################################
+:: #######################################################################################
 :ClearBkp
 cls
 color 6f
 ECHO.
 ECHO.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ECHO.
 ECHO.
 ECHO CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO.
@@ -527,24 +531,24 @@ cls
 color cf
 ECHO.
 ECHO.
-echo --------------------------------------------------------------------------------------------
-echo ------------- C A N C E L A D O  C A N C E L A D O  C A N C E L A D O  ---------------------
-echo ------------- C A N C E L A D O  C A N C E L A D O  C A N C E L A D O  ---------------------
-echo ------------- C A N C E L A D O  C A N C E L A D O  C A N C E L A D O  ---------------------
-echo --------------------------------------------------------------------------------------------
+echo ----------------------------------------------------------------------------------------
+echo ----------- C A N C E L A D O  C A N C E L A D O  C A N C E L A D O  -------------------
+echo ----------- C A N C E L A D O  C A N C E L A D O  C A N C E L A D O  -------------------
+echo ----------- C A N C E L A D O  C A N C E L A D O  C A N C E L A D O  -------------------
+echo ----------------------------------------------------------------------------------------
 ECHO.
 ECHO.
 GOTO End
 
 :End
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ping -n 1 localhost >nul
 ECHO.
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
-:: #######################################################################################################
+:: ###########################################################################################
 
 
 
@@ -562,12 +566,12 @@ GOTO MenuPri
 
 
 
-:: #######################################################################################################
+:: #######################################################################################
 :SpoolImp
 cls
 COLOR A0
 ECHO.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Limpando a fila de impressão...
 echo Limpeza de Impressao
 echo Parando o servico de spooler de impressao...
@@ -575,26 +579,26 @@ echo Parando o servico de spooler de impressao...
 net stop spooler
 ping -n 1 localhost >nul
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Excluindo arquivos da pasta de spool de impressao...
 del /F /Q "%systemroot%\System32\spool\PRINTERS\*
 del /F /Q "%systemroot%\System32\spool\PRINTERS\*.*
 
 ping -n 1 localhost >nul
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Iniciando o servico de spooler de impressao...
 net start spooler
 
 echo A limpeza da fila de impressao foi concluida.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ping -n 1 localhost >nul
 echo.
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
-:: #######################################################################################################
+:: ############################################################################################
 
 
 
@@ -611,20 +615,40 @@ GOTO MenuPri
 
 
 
-:: #######################################################################################################
+:: ##########################################################################################
 :ConfigLan
 cls
 COLOR A0
 ECHO.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ECHO.
+echo Estacao utiliza IP fixo?
+echo 	S - Sim
+echo 	N - Nao
+echo.
+
+choice /c sn /cs /m "Escolha uma Opcao S-im - N-ao"
+
+set condition=true
+
+if errorlevel 2 goto fRedeIPfixoNao
+if errorlevel 1 goto fRedeIPfixoSim
+
+:fRedeIPfixoSim
+set condition=true
+netsh -c interface dump > yourfilename.txt
+goto End
+
+:fRedeIPfixoNao
+set condition=false
+goto End
+
+:End
 echo Otimizando a memoria...
 echo Limpando o cache do sistema...
 echo Purging the DNS Resolver Cache...
 
 ipconfig /flushdns
-
-echo A otimizacao da memoria foi concluida.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 echo Limpando Arquivos da Lan/Wan
 
@@ -632,48 +656,89 @@ arp -d *
 nbtstat -R
 nbtstat -RR
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 echo Limpando e renovando a configuracao de rede...
 
 echo Reiniciando adaptadores de rede...
 ipconfig /release
 ipconfig /renew
-ipconfig /registerdns
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Corrigindo problemas de rede e conexao com a Internet...
 
 echo Redefinindo as configuracoes TCP/IP...
 netsh int ip reset all
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Redefinindo as configuracoes do Winsock...
 netsh winsock reset
 
+netsh int tcp show global > globalredeset.txt
+
+echo Desabilitando transferencia de Arquivos Grandes...
+netsh int tcp set global autotuninglevel=disabled
+
+echo.
+echo ...................................................
+echo Chance efeito oposto. Copia (globalredeset.txt)
+echo Chance efeito oposto. Copia (globalredeset.txt)
+echo Chance efeito oposto. Copia (globalredeset.txt)
+echo.
+echo ...................................................
+echo.
+echo Desativando o descarregamento
+Echo Receber ajuste automático
+Netsh int tcp set global chimney=disabled
+Netsh int tcp set global autotuning=disabled
+netsh int tcp set global netdma=disabled
+netsh int tcp set global rss=disabled
+echo.
+echo ...................................................
+echo Chance efeito oposto. Copia (globalredeset.txt)
+echo Chance efeito oposto. Copia (globalredeset.txt)
+echo Chance efeito oposto. Copia (globalredeset.txt)
+echo.
+echo ...................................................
+echo.
+
 echo Configuracao Internet Concluida
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 echo Reiniciando o servico de cliente DHCP...
 net stop dhcp
 net start dhcp
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Reiniciando o servico de resolucao de problemas de conexao de rede...
 net stop dot3svc
 net start dot3svc
 
+if %condition%==true (
+	netsh exec yourfilename.txt
+)
+
+echo Registrando enderecos DNS
+ipconfig /registerdns
+
+echo A otimizacao da memoria foi concluida.
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
 echo A limpeza e renovacao da configuracao de rede foram concluidas.
 echo.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo.
 ping -n 1 localhost >nul
 ECHO.
 echo.
+
+IF EXIST yourfilename.txt DEL /F yourfilename.txt
+
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
-:: #######################################################################################################
+:: ######################################################################################
 
 
 
@@ -691,13 +756,13 @@ GOTO MenuPri
 
 
 
-:: #######################################################################################################
+:: ########################################################################################
 :FuncgpupRede
 cls
 color 6f
 ECHO.
 ECHO.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ECHO.
 ECHO.
 ECHO CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO.
@@ -761,13 +826,13 @@ GOTO GPUPEnd
 
 :GPUPEnd
 ping -n 1 localhost >nul
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
-:: #######################################################################################################
+:: #########################################################################################
 
 
 
@@ -785,7 +850,7 @@ GOTO MenuPri
 
 
 
-:: #######################################################################################################
+:: ######################################################################################
 :LogOffUser
 cls
 COLOR A0
@@ -911,13 +976,13 @@ if %varCheck_IDUser% == %vlnID_UserDig% (
 :fID_UserDigEND
 echo.
 echo.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo.
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
-:: #######################################################################################################
+:: ##########################################################################################
 
 
 
@@ -935,7 +1000,7 @@ GOTO MenuPri
 
 
 
-:: #######################################################################################################
+:: ##########################################################################################
 :infosysbraz
 cls
 COLOR A0
@@ -982,7 +1047,7 @@ echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
-:: #######################################################################################################
+:: ###############################################################################################
 
 
 
@@ -991,7 +1056,7 @@ GOTO MenuPri
 
 
 
-:: #######################################################################################################
+:: ##############################################################################################
 :infoRedeLan
 cls
 COLOR 4f
@@ -1045,13 +1110,13 @@ goto infoRedeLanend
 
 :infoRedeLanend
 ECHO.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ping -n 1 localhost >nul
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
-:: #######################################################################################################
+:: ############################################################################################
 
 
 
@@ -1063,7 +1128,7 @@ GOTO MenuPri
 
 
 
-:: #######################################################################################################
+:: ###############################################################################################
 :UninstalJava
 cls
 color 17
@@ -1149,13 +1214,13 @@ echo Progresso:##################################### 100%%
 echo ----------------------------------
 
 echo.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ping -n 1 localhost >nul
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
-:: #######################################################################################################
+:: #################################################################################################
 
 
 
@@ -1170,7 +1235,7 @@ GOTO MenuPri
 
 
 
-:: #######################################################################################################
+:: #################################################################################################
 :MenuWinProgram
 cls
 color 57
@@ -1179,27 +1244,35 @@ ECHO 	    ##### MENU ##### MENU ###### MENU ###### MENU ####### MENU ####### MEN
 ECHO 	    ################################ M E N U   P R I N C I P A L ############################
 echo.
 echo 				[----------------MENU DE OPCOES-----------------]
-ECHO 				[						]
-ECHO 				[	1.Adicionar e Remover Programas 	]
-ECHO 				[	2.Reorganizar Tela 			]
-ECHO 				[	3.Som  					]
-ECHO 				[	4.Volume Som 				]
-ECHO 				[	5.Conexao Area Remota 			]
-ECHO 				[	6.Limpeza de Disco do Windows 		]
-ECHO 				[	7.Gerenciador de Dispositivo 		]
-ECHO 				[	8.Configuracoes Adaptador de Rede 	]
-ECHO 				[	9.Propriedades do Sistema 		]
-ECHO 				[	10.Gerenciador de Tarefas		]
-ECHO 				[	11.Scanners e Cameras 			]
-ECHO 				[	12.Opcao de Pasta 			]
-ECHO 				[	13.Sobre PC 				]
-ECHO 				[	14.Resumo do Sistema 			]
-ECHO 				[	15.Monitor de Recurso 			]
-ECHO 				[	16.Projetor 				]
-ECHO 				[	17.Seguranca e Manutencao 		]
-ECHO 				[	18.Sobre o Windows 			]
+ECHO 				[	1. Gerenciador de Tarefas 		]
+ECHO 				[	2. Gerenciador de Dispositivo 		]
+echo 				[...............................................]
+ECHO 				[	3. Desempenho 				]
+ECHO 				[	4. Propriedades do Sistema 		]
+echo 				[...............................................]
+ECHO 				[	5. Adicionar e Remover Programas 	]
+ECHO 				[	6. Limpeza de Disco do Windows 		]
+ECHO 				[	7. Seguranca e Manutencao 		]
+echo 				[...............................................]
+ECHO 				[	8. Reorganizar Tela 			]
+ECHO 				[	9. Scanners e Cameras 			]
+ECHO 				[	10. Projetor 				]
+echo 				[...............................................]
+ECHO 				[	11. Som 				]
+ECHO 				[	12. Volume Som 				]
+echo 				[...............................................]
+ECHO 				[	13. Configuracoes Adaptador de Rede 	]
+ECHO 				[	14. Rede e Compartilhamento 		]
+ECHO 				[	15. Conexao Area Remota 		]
+echo 				[...............................................]
+ECHO 				[	16. Opcao de Pasta 			]
+echo 				[...............................................]
+ECHO 				[	17. Sobre PC 				]
+ECHO 				[	18. Resumo do Sistema 			]
+ECHO 				[	19. Monitor de Recurso 			]
+ECHO 				[	20. Sobre o Windows 			]
+echo 				[...............................................]
 ECHO 				[	0.VOLTAR MENU PRINCIPAL			]
-ECHO 				[						]
 echo 				[###############################################]
 ECHO.
 echo.
@@ -1209,26 +1282,28 @@ set /a varCheck=%userinp%
 
 if %varCheck% == %userinp% (
 
-if %userinp% equ 1 appwiz.cpl
-if %userinp% equ 2 desk.cpl
-if %userinp% equ 3 mmsys.cpl
-if %userinp% equ 4 sndvol
-if %userinp% equ 5 mstsc
+if %userinp% equ 1 taskmgr
+if %userinp% equ 2 hdwwiz.cpl
+if %userinp% equ 3 rundll32.exe shell32.dll,Control_RunDLL sysdm.cpl,,3
+if %userinp% equ 4 sysdm.cpl
+if %userinp% equ 5 appwiz.cpl
 if %userinp% equ 6 cleanmgr
-if %userinp% equ 7 hdwwiz.cpl
-if %userinp% equ 8 ncpa.cpl
-if %userinp% equ 9 sysdm.cpl
-if %userinp% equ 10 taskmgr
-if %userinp% equ 11 control /name Microsoft.ScannersAndCameras
-if %userinp% equ 12 control /name Microsoft.FolderOptions
-if %userinp% equ 13 control /name Microsoft.System
-if %userinp% equ 14 msinfo32
-if %userinp% equ 15 resmon
-if %userinp% equ 16 displayswitch
-if %userinp% equ 17 wscui.cpl
-if %userinp% equ 18 winver
+if %userinp% equ 7 wscui.cpl
+if %userinp% equ 8 desk.cpl
+if %userinp% equ 9 control /name Microsoft.ScannersAndCameras
+if %userinp% equ 10 displayswitch
+if %userinp% equ 11 mmsys.cpl
+if %userinp% equ 12 sndvol
+if %userinp% equ 13 ncpa.cpl
+if %userinp% equ 14 Control.exe /name Microsoft.networkandSharingcenter
+if %userinp% equ 15 mstsc
+if %userinp% equ 16 control /name Microsoft.FolderOptions
+if %userinp% equ 17 control /name Microsoft.System
+if %userinp% equ 18 msinfo32
+if %userinp% equ 19 resmon
+if %userinp% equ 20 winver
 if %userinp% equ 0 GOTO MenuPri
-if %userinp% geq 19 GOTO :MenuWinProgram
+if %userinp% geq 21 GOTO :MenuWinProgram
 
 GOTO :MenuWinProgram
 
@@ -1242,7 +1317,7 @@ echo Pressione qualquer tecla para Voltar ao Painel de Controle
 pause > nul
 GOTO :MenuWinProgram
 )
-:: #######################################################################################################
+:: ##################################################################################################
 
 
 
@@ -1252,19 +1327,19 @@ GOTO :MenuWinProgram
 
 
 
-:: #######################################################################################################
+:: ###################################################################################################
 :ClearLixo
 cls
 COLOR A0
 ECHO.
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ECHO ******************** LIXEIRA ********************
 del c:\$recycle.bin\* /s /q
 PowerShell.exe -NoProfile -Command Clear-RecycleBin -Confirm:$false >$null
 del $null
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Limpando a lixeira...
 rd /s /q "%USERPROFILE%\AppData\Local\Microsoft\Windows\INetCache\Low\Content.IE5"
 rd /s /q "%USERPROFILE%\AppData\Local\Microsoft\Windows\INetCache\Low"
@@ -1276,7 +1351,7 @@ del /f /s /q e:\$Recycle.bin\*.*
 call powershell.exe Clear-RecycleBin -force -ErrorAction:Ignore
 
 echo Lixeira Concluida
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ping -n 1 localhost >nul
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
@@ -1301,7 +1376,7 @@ GOTO MenuPri
 
 
 
-:: #######################################################################################################
+:: ############################################################################################
 :DISCONADAPTERLANETher
 cls
 COLOR A0
@@ -1382,7 +1457,7 @@ echo.
 echo ------------------------------------------------------------------------
 echo.
 echo Procedimento Concluido - Finalizando...
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ping -n 1 localhost >nul
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
@@ -1395,6 +1470,40 @@ GOTO MenuPri
 
 
 
+
+
+
+
+
+
+
+:: #######################################################################################################
+:CallPromptCMDStart
+cls
+color 03
+echo.
+echo 	Seja Bem Vindo ao Prompt de Comando
+echo 		Digite EXIT para sair
+echo 		Digite EXIT para sair
+echo 		Digite EXIT para sair
+echo 		Digite EXIT para sair
+echo.
+echo.
+
+call cmd
+cls
+COLOR A0
+echo.
+echo.
+echo Saindo do Prompt de Comando.
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ping -n 1 localhost >nul
+echo.
+echo.
+echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
+TIMEOUT /T 3
+GOTO MenuPri
+:: #######################################################################################################
 
 
 
