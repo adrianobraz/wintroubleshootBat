@@ -95,8 +95,7 @@ echo 				[----------------MENU DE OPCOES-----------------]
 ECHO 				[	1.Prompt de Comando			]
 echo 				[...............................................]
 ECHO 				[	2.Atualizar Politicas de Grupo		]
-ECHO 				[	3.Reconfigurar Rede			]
-echo 				[...............................................]
+ECHO 				[	3.Limpeza Cache de Rede			]
 ECHO 				[	4.Info Lan Local ou IP			]
 ECHO 				[	5.Habilitar/Desabilitar Rede		]
 echo 				[...............................................]
@@ -107,12 +106,15 @@ echo 				[...............................................]
 ECHO 				[	9.LogOff de Usuarios			]
 echo 				[...............................................]
 ECHO 				[	10.Desinstalar JAVA			]
-ECHO 				[	11.Liberar Impressao			]
-ECHO 				[	12.Limpar Arquivos de Backup		]
+ECHO 				[	11.Desinstalar TEAMS			]
 echo 				[...............................................]
-ECHO 				[	13.Info do PC				]
+ECHO 				[	12.Liberar Impressao			]
+ECHO 				[	13.Limpar Arquivos de Backup		]
+ECHO 				[	14.Reparo Windows / Disco		]
 echo 				[...............................................]
-ECHO 				[	14.WINDOWS - PAINEL CONTROLE		]
+ECHO 				[	15.Info do PC				]
+echo 				[...............................................]
+ECHO 				[	16.WINDOWS - PAINEL CONTROLE		]
 echo 				[...............................................]
 ECHO 				[	0.Sair					]
 echo 				[###############################################]
@@ -136,11 +138,13 @@ if %userinp% equ 7 GOTO ClearTemp
 if %userinp% equ 8 GOTO ClearInt
 if %userinp% equ 9 GOTO LogOffUser
 if %userinp% equ 10 GOTO UninstalJava
-if %userinp% equ 11 GOTO SpoolImp
-if %userinp% equ 12 GOTO ClearBkp
-if %userinp% equ 13 GOTO infosysbraz
-if %userinp% equ 13 GOTO MenuWinProgram
-if %userinp% geq 15 GOTO MenuPri
+if %userinp% equ 11 GOTO TeamsClear
+if %userinp% equ 12 GOTO SpoolImp
+if %userinp% equ 13 GOTO ClearBkp
+if %userinp% equ 14 GOTO ReparoWinDisc
+if %userinp% equ 15 GOTO infosysbraz
+if %userinp% equ 16 GOTO MenuWinProgram
+if %userinp% geq 17 GOTO MenuPri
 
 ) else (
 ping -n 1 localhost >nul
@@ -177,7 +181,8 @@ echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo ******************** PASTA TEMP DOS USUÁRIOS ********************
 
 echo Apaga todos arquivos da pasta Temp de todos os usuários, mantendo das pastas
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Temp\* /s /q
+for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Temp\* /f /s /q
+for /d %%F in (C:\Users\*) do del /f /s /q %%F\AppData\Local\Temp\* 
 
 echo cria arquivo vazio.txt dentro da pasta Temp de todos usuários
 for /d %%F in (C:\Users\*) do type nul >"%%F\Appdata\Local\Temp\vazio.txt"
@@ -186,87 +191,84 @@ echo apaga todas as pastas vazias dentro da pasta Temp de todos usuários (mas n
 for /d %%F in (C:\Users\*) do robocopy %%F\AppData\Local\Temp\ %%F\AppData\Local\Temp\ /s /move /NFL /NDL /NJH /NJS /nc /ns /np
 
 echo Apaga arquivo vazio.txt dentro da pasta Temp de todos usuários
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Temp\vazio.txt
+for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Temp\vazio.txt /f/s/q
+for /d %%F in (C:\Users\*) do del /f/s/q %%F\AppData\Local\Temp\vazio.txt 
 
-echo ******************** WINDOWS TEMP ********************
-
-echo Apaga todos arquivos da pasta \Windows\Temp, mantendo das pastas
-del c:\Windows\Temp\* /s /q
-
-echo cria arquivo vazio.txt dentro da pasta \Windows\Temp
-type nul > c:\Windows\Temp\vazio.txt
-
-echo apaga todas as pastas vazias dentro da pasta \Windows\Temp (mas não apaga a própria pasta)
-robocopy c:\Windows\Temp c:\Windows\Temp /s /move /NFL /NDL /NJH /NJS /nc /ns /np
-
-echo Apaga arquivo vazio.txt dentro da pasta \Windows\Temp
-del c:\Windows\Temp\vazio.txt
 
 echo ******************** ARQUIVOS DE LOG DO WINDOWS ********************
 
-del c:\windows\logs\cbs\*.log
-del C:\Windows\Logs\MoSetup\*.log
-del C:\Windows\Panther\*.log /s /q
-del C:\Windows\inf\*.log /s /q
-del C:\Windows\logs\*.log /s /q
-del C:\Windows\SoftwareDistribution\*.log /s /q
-del C:\Windows\Microsoft.NET\*.log /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\OneDrive\setup\logs\*.log /s /q
+del /f/s/q c:\windows\logs\cbs\*.log
+del /f/s/q C:\Windows\Logs\MoSetup\*.log
+del /f/s/q C:\Windows\Panther\*.log /s /q
+del /f/s/q C:\Windows\inf\*.log /s /q
+del /f/s/q C:\Windows\logs\*.log /s /q
+del /f/s/q C:\Windows\SoftwareDistribution\*.log /s /q
+del /f/s/q C:\Windows\Microsoft.NET\*.log /s /q
+for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\OneDrive\setup\logs\*.log /s /q /f
+for /d %%F in (C:\Users\*) do del /s /q /f %%F\AppData\Local\Microsoft\OneDrive\setup\logs\*.log 
+
 
 echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Limpando os arquivos temporarios do usuario atual...
 
-del /F /Q "%TEMP%\*.*"
+DEL /S /F /Q "%TMP%\*.*"
+del /S /F /Q "%TEMP%\*.*"
+
+DEL /S /F /Q "%WINDIR%\Temp\*.*"
 
 echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo Limpando os arquivos temporarios do sistema...
-del /F /Q "%SystemRoot%\Temp\*.*"
+echo Arquivos de Distribuicao Concluido
+DEL /S /F /Q "%LOCALAPPDATA%\Temp\*.*"
+del /s /f /q "%HomePath%\AppData\Local\Temp"
+del /s /f /q %HomePath%\AppData\LocalLow\Temp\*.*
+
+del /s /f /q "%APPDATA%\Microsoft\Windows\Recent\*.*"
+
+del /s /f /q "%APPDATA%\Microsoft\Windows\Recent\AutomaticDestinations"\*.* 
+del /s /f /q "%APPDATA%\Microsoft\Windows\Recent\CustomDestinations"\*.*
+
+del /S /F /Q "%userprofile%\appdata\local\temp\*.*"
 
 echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Limpando os arquivos temporarios da Internet...
 del /F /Q "%USERPROFILE%\AppData\Local\Microsoft\Windows\INetCache\*.*"
 
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+rd /s /q %windir%\Temp
+rd /s /q "%HomePath%\AppData\Local\Temp"
+
+rd /s /q "%APPDATA%\Microsoft\Windows\Recent\AutomaticDestinations"
+rd /s /q "%APPDATA%\Microsoft\Windows\Recent"
+rd /s /q "%APPDATA%\Microsoft\Windows\Recent\CustomDestinations"
+
+md %windir%\Temp
+
+md "%APPDATA%\Microsoft\Windows\Recent\AutomaticDestinations"
+md "%APPDATA%\Microsoft\Windows\Recent"
+md "%APPDATA%\Microsoft\Windows\Recent\CustomDestinations"
+
+
+echo A limpeza de arquivos temporarios foi concluida.
+
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo Limpando os arquivos temporarios do sistema...
+del /F /Q "%SystemRoot%\Temp\*.*"
 echo Limpando os arquivos temporarios de logs do Windows...
 del /F /Q "%SystemRoot%\Logs\*.*"
-
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Limpando os arquivos temporarios do Windows Update...
 del /F /Q "%SystemRoot%\SoftwareDistribution\Download\*.*"
-
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Limpando os arquivos temporarios do Windows Error Reporting...
 del /F /Q "%SystemRoot%\WinSxS\ManifestCache\*.*"
 
 echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo Deletando arquivos de Distribuicao
+REG Delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\RunMRU
+REG Delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\TypedPaths /VA /F
 
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo Deletando arquivos de Distribuicao
+net stop wuauserv
 rd /s /q "%windir%\softwaredistribution"
 net start wuauserv
 
-echo Arquivos de Distribuicao Concluido
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo A limpeza de arquivos temporarios
-del /s /f /q "%WinDir%\Temp\*.*"
-del /s /f /q "%Temp%\*.*"
-del /s /f /q "%USERPROFILE%\Local Settings\Temp\*.*"
-del /s /f /q "%APPDATA%\Microsoft\Windows\Recent\*.*"
-del /s /f /q "%USERPROFILE%\Local Settings\Temp\*.*"
-del /s /f /q "%USERPROFILE%\Recent\*.*"
-del /s /f /q "%USERPROFILE%\Cookies\*.*"
-del /s /f /q "%HomePath%\AppData\Local\Temp"
-
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ping -n 1 localhost >nul
-
-rd /s /q "%USERPROFILE%\Local Settings\Temp"
-rd /s /q "%APPDATA%\Microsoft\Windows\Recent"
-rd /s /q "%USERPROFILE%\Local Settings\Temp"
-rd /s /q "%USERPROFILE%\Recent"
-rd /s /q "%USERPROFILE%\Cookies"
-rd /s /q "%HomePath%\AppData\Local\Temp"
-
-echo A limpeza de arquivos temporarios foi concluida.
 echo ----------------------------------
 ping -n 1 localhost >nul
 
@@ -274,10 +276,12 @@ echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Arquivos Prefetch
 
 del /s /f /q "%WinDir%\Prefetch\*.*"
+del /s /f /q C:\Windows\Prefetch\*.*
 
 ping -n 1 localhost >nul
 
 rd /s /q "%WinDir%\Prefetch"
+md %windir%\Prefetch
 
 echo Arquivos Prefetch Concluido
 
@@ -289,6 +293,12 @@ for /d %%F in (C:\Users\*) do del %%F\AppData\Roaming\Adobe\Common\"Media Cache 
 
 echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ping -n 1 localhost >nul
+cls
+echo ****** AGUARDE ****** AGUARDE ****** AGUARDE ****** AGUARDE ******
+echo ****** AGUARDE ****** AGUARDE ****** AGUARDE ****** AGUARDE ******
+echo ****** AGUARDE ****** AGUARDE ****** AGUARDE ****** AGUARDE ******
+
+cleanmgr /sagerun:64 /Autoclean
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
@@ -608,6 +618,78 @@ GOTO MenuPri
 
 
 
+:: #######################################################################################
+:TeamsClear
+cls
+COLOR A0
+ECHO.
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo Excluindo Teams
+echo Liberando Teams
+
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo Excluindo arquivos ...
+
+del /S /F /Q "%userprofile%\appdata\local\Microsoft\Teams\*.*"
+del /S /F /Q "%appdata%\Microsoft\Teams\*.*"
+del /S /F /Q "%appdata%\Teams\*.*"
+rd /F /Q "%appdata%\Microsoft\Teams"
+
+ping -n 1 localhost >nul
+
+echo A limpeza foi concluida.
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ping -n 1 localhost >nul
+echo.
+echo.
+echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
+pause > nul
+GOTO MenuPri
+:: ############################################################################################
+
+
+
+
+
+
+
+
+
+
+:: #######################################################################################
+:ReparoWinDisc
+cls
+COLOR A0
+ECHO.
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo Reparar Windows
+
+echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo Reparando Sistema ...
+
+REG ADD “HKLMSYSTEMCurrentControlSetControlSession ManagerMemory Management” /v ClearPageFileAtShutdown /t REG_DWORD /d 1 /f
+sc stop "SysMain" & sc config "SysMain" start=disabled
+
+sc stop "SysMain" & sc config "SysMain" start=disabled
+
+Dism /Online /Cleanup-Image /RestoreHealth
+sfc /scannow
+defrag /c /h /u
+chkdsk /f /r /x
+
+ping -n 1 localhost >nul
+
+echo Reparo foi concluido.
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ping -n 1 localhost >nul
+echo.
+echo.
+echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
+pause > nul
+GOTO MenuPri
+:: ############################################################################################
+
+
 
 
 
@@ -676,8 +758,6 @@ netsh winsock reset
 
 netsh int tcp show global > globalredeset.txt
 
-echo Desabilitando transferencia de Arquivos Grandes...
-netsh int tcp set global autotuninglevel=disabled
 
 echo.
 echo ...................................................
@@ -687,13 +767,7 @@ echo Chance efeito oposto. Copia (globalredeset.txt)
 echo.
 echo ...................................................
 echo.
-echo Desativando o descarregamento
-Echo Receber ajuste automático
-Netsh int tcp set global chimney=disabled
-Netsh int tcp set global autotuning=disabled
-netsh int tcp set global netdma=disabled
-netsh int tcp set global rss=disabled
-echo.
+
 echo ...................................................
 echo Chance efeito oposto. Copia (globalredeset.txt)
 echo Chance efeito oposto. Copia (globalredeset.txt)
@@ -858,14 +932,6 @@ COLOR A0
 set vlcUserNomeTempT2=%username:~0,-3%
 goto fID_UserDigIniMenu
 
-
-
-
-
-
-
-
-
 :fID_UserDigIniMenu
 cls
 echo.
@@ -898,18 +964,6 @@ IF "%vlcUserNome%" == "%vlcUserNomeTempT2%" (
 
 set /a varCheck_IDUser=%vlnID_UserDig%
 goto fID_UserDigValLogOFf
-
-
-
-
-
-
-
-
-
-
-
-
 
 :fID_UserDigValLogOFf
 if %varCheck_IDUser% == %vlnID_UserDig% (
@@ -963,14 +1017,6 @@ if %varCheck_IDUser% == %vlnID_UserDig% (
 	echo OPCAO INVALIDA. TENTE NOVAMENTE
 	goto fID_UserDigEND
 )
-
-
-
-
-
-
-
-
 
 
 :fID_UserDigEND
@@ -1233,8 +1279,6 @@ GOTO MenuPri
 
 
 
-
-
 :: #################################################################################################
 :MenuWinProgram
 cls
@@ -1244,33 +1288,32 @@ ECHO 	    ##### MENU ##### MENU ###### MENU ###### MENU ####### MENU ####### MEN
 ECHO 	    ################################ M E N U   P R I N C I P A L ############################
 echo.
 echo 				[----------------MENU DE OPCOES-----------------]
-ECHO 				[	1. Gerenciador de Tarefas 		]
-ECHO 				[	2. Gerenciador de Dispositivo 		]
+ECHO 				[	1. Pastas compartilhadas		]
+ECHO 				[	2. Certificados				]
+ECHO 				[	3. Gerenciador de Tarefas 		]
+ECHO 				[	4. Gerenciador de Dispositivo 		]
+ECHO 				[	5. Gerenciador de Impressao 		]
 echo 				[...............................................]
-ECHO 				[	3. Desempenho 				]
-ECHO 				[	4. Propriedades do Sistema 		]
+ECHO 				[	6. Desempenho 				]
+ECHO 				[	7. Propriedades do Sistema 		]
 echo 				[...............................................]
-ECHO 				[	5. Adicionar e Remover Programas 	]
-ECHO 				[	6. Limpeza de Disco do Windows 		]
-ECHO 				[	7. Seguranca e Manutencao 		]
+ECHO 				[	8. Adicionar e Remover Programas 	]
 echo 				[...............................................]
-ECHO 				[	8. Reorganizar Tela 			]
-ECHO 				[	9. Scanners e Cameras 			]
-ECHO 				[	10. Projetor 				]
-echo 				[...............................................]
+ECHO 				[	9. Reorganizar Tela 			]
+ECHO 				[	10. Scanners e Cameras 			]
 ECHO 				[	11. Som 				]
-ECHO 				[	12. Volume Som 				]
 echo 				[...............................................]
+ECHO 				[	12. Propriedades de Internet		]
 ECHO 				[	13. Configuracoes Adaptador de Rede 	]
-ECHO 				[	14. Rede e Compartilhamento 		]
-ECHO 				[	15. Conexao Area Remota 		]
+ECHO 				[	14. Remoção Malware			]
 echo 				[...............................................]
+ECHO 				[	15. Teclado Virtual			]
 ECHO 				[	16. Opcao de Pasta 			]
 echo 				[...............................................]
-ECHO 				[	17. Sobre PC 				]
-ECHO 				[	18. Resumo do Sistema 			]
-ECHO 				[	19. Monitor de Recurso 			]
-ECHO 				[	20. Sobre o Windows 			]
+ECHO 				[	17. Resumo do Sistema 			]
+ECHO 				[	18. Monitor de Recurso 			]
+ECHO 				[	19. Sobre o Windows 			]
+ECHO 				[	20. Sobre PC 				]
 echo 				[...............................................]
 ECHO 				[	0.VOLTAR MENU PRINCIPAL			]
 echo 				[###############################################]
@@ -1282,26 +1325,26 @@ set /a varCheck=%userinp%
 
 if %varCheck% == %userinp% (
 
-if %userinp% equ 1 taskmgr
-if %userinp% equ 2 hdwwiz.cpl
-if %userinp% equ 3 rundll32.exe shell32.dll,Control_RunDLL sysdm.cpl,,3
-if %userinp% equ 4 sysdm.cpl
-if %userinp% equ 5 appwiz.cpl
-if %userinp% equ 6 cleanmgr
-if %userinp% equ 7 wscui.cpl
-if %userinp% equ 8 desk.cpl
-if %userinp% equ 9 control /name Microsoft.ScannersAndCameras
-if %userinp% equ 10 displayswitch
+if %userinp% equ 1 fsmgmt.msc
+if %userinp% equ 2 certmgr.msc
+if %userinp% equ 3 taskmgr
+if %userinp% equ 4 hdwwiz.cpl
+if %userinp% equ 5 printmanagement.msc
+if %userinp% equ 6 rundll32.exe shell32.dll,Control_RunDLL sysdm.cpl,,3
+if %userinp% equ 7 sysdm.cpl
+if %userinp% equ 8 appwiz.cpl
+if %userinp% equ 9 desk.cpl
+if %userinp% equ 10 control /name Microsoft.ScannersAndCameras
 if %userinp% equ 11 mmsys.cpl
-if %userinp% equ 12 sndvol
+if %userinp% equ 12 inetcpl.cpl
 if %userinp% equ 13 ncpa.cpl
-if %userinp% equ 14 Control.exe /name Microsoft.networkandSharingcenter
-if %userinp% equ 15 mstsc
+if %userinp% equ 14 mrt
+if %userinp% equ 15 osk
 if %userinp% equ 16 control /name Microsoft.FolderOptions
-if %userinp% equ 17 control /name Microsoft.System
-if %userinp% equ 18 msinfo32
-if %userinp% equ 19 resmon
-if %userinp% equ 20 winver
+if %userinp% equ 17 msinfo32
+if %userinp% equ 18 resmon
+if %userinp% equ 19 winver
+if %userinp% equ 20 control /name Microsoft.System
 if %userinp% equ 0 GOTO MenuPri
 if %userinp% geq 21 GOTO :MenuWinProgram
 
@@ -1336,7 +1379,9 @@ ECHO.
 echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ECHO ******************** LIXEIRA ********************
 del c:\$recycle.bin\* /s /q
+del c:\$Recycle.bin\*.* /f /s /q
 PowerShell.exe -NoProfile -Command Clear-RecycleBin -Confirm:$false >$null
+call powershell.exe Clear-RecycleBin -force -ErrorAction:Ignore
 del $null
 
 echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1349,6 +1394,8 @@ del /f /s /q d:\$Recycle.bin\*.*
 del /f /s /q e:\$Recycle.bin\*.*
 
 call powershell.exe Clear-RecycleBin -force -ErrorAction:Ignore
+
+RMDIR /s %systemdrive%\$Recycle.bin
 
 echo Lixeira Concluida
 echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
