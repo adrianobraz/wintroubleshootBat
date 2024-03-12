@@ -624,6 +624,9 @@ cls
 COLOR A0
 ECHO.
 echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo AGUARDE ------ AGUARDE ------- AGUARDE
+taskkill /f /im teams.exe
+ping -n 3 localhost >nul
 echo Excluindo Teams
 echo Liberando Teams
 
@@ -632,8 +635,10 @@ echo Excluindo arquivos ...
 
 del /S /F /Q "%userprofile%\appdata\local\Microsoft\Teams\*.*"
 del /S /F /Q "%appdata%\Microsoft\Teams\*.*"
-del /S /F /Q "%appdata%\Teams\*.*"
+del /S /F /Q "%userprofile%\appdata\local\Packages\MSTeams_8wekyb3d8bbwe/*.*"
+
 rd /F /Q "%appdata%\Microsoft\Teams"
+rd /F /Q "%userprofile%\appdata\local\Packages\MSTeams_8wekyb3d8bbwe"
 
 ping -n 1 localhost >nul
 
