@@ -1401,6 +1401,7 @@ del /f /s /q e:\$Recycle.bin\*.*
 call powershell.exe Clear-RecycleBin -force -ErrorAction:Ignore
 
 RMDIR /s %systemdrive%\$Recycle.bin
+Dism.exe /online /Cleanup-Image /StartComponentCleanup
 
 echo Lixeira Concluida
 echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1580,3 +1581,4 @@ echo Pressione Sair do Programa..
 TIMEOUT /T 3
 exit
 :: #######################################################################################################
+
