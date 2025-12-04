@@ -1095,6 +1095,17 @@ echo.
 wmic baseboard get product,Manufacturer,version,serialnumbe
 echo.
 echo.
+
+echo WinTool for Windows 11...
+powershell.exe -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/alerion921/WinTool-for-Win11/main/WinTool.ps1'))"
+echo.
+echo.
+echo Processo concluido!
+echo Pressione qualquer tecla para continuar
+pause
+echo Processo concluido!
+echo.
+echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
@@ -1581,4 +1592,5 @@ echo Pressione Sair do Programa..
 TIMEOUT /T 3
 exit
 :: #######################################################################################################
+
 
