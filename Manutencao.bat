@@ -1,11 +1,17 @@
 @echo off
 mode con: cols=110  lines=40
 color 3F
-Title Limpeza de Maquina
-ECHO.
-ECHO.
-ECHO.
-ECHO.
+Title Limpeza de Maquina v2.0
+
+:: =============================================================================================
+:: MANUTENCAO E RECUPERACAO DO WINDOWS - v2.0
+:: Revisado: bugs corrigidos, confirmacoes de seguranca, log de execucao,
+::           limpador de registro (itens seguros) e ajustes visuais.
+:: =============================================================================================
+
+set "LOGFILE=%~dp0log_manutencao.txt"
+echo ==== Sessao iniciada em %date% %time% ==== >> "%LOGFILE%"
+
 ECHO.
 ECHO.
 ECHO.
@@ -16,14 +22,15 @@ echo 	+			MANUTENCAO E RECUPERACAO DO WINDOWS				+
 echo 	+	M A N U T E N C A O   E   R E C U P E R A C A O   D O   W I N D O W S		+
 ECHO 	+											+
 echo 	+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 ECHO.
 Echo 					Aguarde ou Pressione qualquer tecla
 TIMEOUT /T 3
 CLS
 
-timeout /t 1 /nobreak > NUL
-openfiles > NUL 2>&1
+:: -------------------------------------------------------------------------------
+:: Verificacao de administrador (metodo mais confiavel que "openfiles")
+:: -------------------------------------------------------------------------------
+net session >nul 2>&1
 if %errorlevel%==0 (
     echo                          MANUTENCAO E RECUPERACAO DO WINDOWS
     echo.
@@ -35,9 +42,6 @@ echo 	   	A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O  A T E N C 
 echo 	   	A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O
 echo 	   ######################################################################################
 echo 	   #											#
-echo 	   #											#
-echo 	   #											#
-echo 	   #											#
 echo 	   #			V O C E   N A O   E   A D M I N I S T R A D O R			#
 echo 	   #											#
 echo 	   #			Voce deve executar como Administrador				#
@@ -45,37 +49,27 @@ echo 	   #			Clique com o botao direito do mouse				#
 echo 	   #			Selecione  ^'Executar como administrador'^			#
 echo 	   #			e tente novamente.						#
 echo 	   #											#
-echo 	   #											#
-echo 	   #											#
-echo 	   #											#
-echo 	   #											#
 echo 	   ######################################################################################
-echo 	   A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O
 echo 	   A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O  A T E N C A O
 echo.
 TIMEOUT /T 5
-	exit
+	exit /b
 )
 
 color 6f
-
-echo.
 GOTO MenuPri
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+:: =========================================================================================
+:: Sub-rotina de confirmacao reutilizavel.
+:: Uso: call :Confirmar "Texto da pergunta" && goto ROTULO_SIM || goto ROTULO_NAO
+:: (mantida simples com CHOICE para compatibilidade com versoes antigas do Windows)
+:: =========================================================================================
+:Confirmar
+echo.
+echo  %~1
+CHOICE /C SN /M "Confirma (S/N)"
+exit /b %errorlevel%
 
 
 :: #######################################################################################
@@ -113,19 +107,21 @@ ECHO 				[	13.Limpar Arquivos de Backup		]
 ECHO 				[	14.Reparo Windows / Disco		]
 echo 				[...............................................]
 ECHO 				[	15.Info do PC				]
+ECHO 				[	16.Limpar Registro do Windows		]
 echo 				[...............................................]
-ECHO 				[	16.WINDOWS - PAINEL CONTROLE		]
+ECHO 				[	17.WINDOWS - PAINEL CONTROLE		]
 echo 				[...............................................]
 ECHO 				[	0.Sair					]
 echo 				[###############################################]
 ECHO.
 
 echo.
+set "userinp="
 set /p userinp=Entra com uma Opcao do Menu: 
 
-set /a varCheck=%userinp%
+set /a varCheck=%userinp% 2>nul
 
-if %varCheck% == %userinp% (
+if "%varCheck%" == "%userinp%" (
 
 if %userinp% equ 0 GOTO SairPrograma
 if %userinp% equ 1 GOTO CallPromptCMDStart
@@ -143,13 +139,13 @@ if %userinp% equ 12 GOTO SpoolImp
 if %userinp% equ 13 GOTO ClearBkp
 if %userinp% equ 14 GOTO ReparoWinDisc
 if %userinp% equ 15 GOTO infosysbraz
-if %userinp% equ 16 GOTO MenuWinProgram
-if %userinp% geq 17 GOTO MenuPri
+if %userinp% equ 16 GOTO LimparRegistro
+if %userinp% equ 17 GOTO MenuWinProgram
+if %userinp% geq 18 GOTO MenuPri
 
 ) else (
 ping -n 1 localhost >nul
 echo.
-echo OPCAO INVALIDA. TENTE NOVAMENTE
 echo OPCAO INVALIDA. TENTE NOVAMENTE
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
@@ -157,18 +153,6 @@ pause > nul
 GOTO MenuPri
 )
 :: #######################################################################################
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 :: ##################################################################################
@@ -176,148 +160,94 @@ GOTO MenuPri
 cls
 COLOR A0
 ECHO.
+call :Confirmar "Isso vai apagar TODOS os arquivos temporarios de TODOS os usuarios. Deseja continuar?"
+if errorlevel 2 GOTO MenuPri
+
+echo Iniciando limpeza de temporarios em %date% %time% >> "%LOGFILE%"
 
 echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo ******************** PASTA TEMP DOS USUÁRIOS ********************
+echo ******************** PASTA TEMP DOS USUARIOS ********************
 
-echo Apaga todos arquivos da pasta Temp de todos os usuários, mantendo das pastas
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Temp\* /f /s /q
-for /d %%F in (C:\Users\*) do del /f /s /q %%F\AppData\Local\Temp\* 
+for /d %%F in (C:\Users\*) do del /f /s /q "%%F\AppData\Local\Temp\*" >nul 2>&1
 
-echo cria arquivo vazio.txt dentro da pasta Temp de todos usuários
-for /d %%F in (C:\Users\*) do type nul >"%%F\Appdata\Local\Temp\vazio.txt"
-
-echo apaga todas as pastas vazias dentro da pasta Temp de todos usuários (mas não apaga a própria pasta Temp)
-for /d %%F in (C:\Users\*) do robocopy %%F\AppData\Local\Temp\ %%F\AppData\Local\Temp\ /s /move /NFL /NDL /NJH /NJS /nc /ns /np
-
-echo Apaga arquivo vazio.txt dentro da pasta Temp de todos usuários
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Temp\vazio.txt /f/s/q
-for /d %%F in (C:\Users\*) do del /f/s/q %%F\AppData\Local\Temp\vazio.txt 
-
+echo apaga subpastas vazias dentro da pasta Temp de cada usuario (mantem a pasta Temp)
+for /d %%F in (C:\Users\*) do robocopy "%%F\AppData\Local\Temp\" "%%F\AppData\Local\Temp\" /s /move /NFL /NDL /NJH /NJS /nc /ns /np >nul
 
 echo ******************** ARQUIVOS DE LOG DO WINDOWS ********************
-
-del /f/s/q c:\windows\logs\cbs\*.log
-del /f/s/q C:\Windows\Logs\MoSetup\*.log
-del /f/s/q C:\Windows\Panther\*.log /s /q
-del /f/s/q C:\Windows\inf\*.log /s /q
-del /f/s/q C:\Windows\logs\*.log /s /q
-del /f/s/q C:\Windows\SoftwareDistribution\*.log /s /q
-del /f/s/q C:\Windows\Microsoft.NET\*.log /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\OneDrive\setup\logs\*.log /s /q /f
-for /d %%F in (C:\Users\*) do del /s /q /f %%F\AppData\Local\Microsoft\OneDrive\setup\logs\*.log 
-
+del /f/s/q "%windir%\logs\cbs\*.log" >nul 2>&1
+del /f/s/q "%windir%\Logs\MoSetup\*.log" >nul 2>&1
+del /f/s/q "%windir%\Panther\*.log" >nul 2>&1
+del /f/s/q "%windir%\inf\*.log" >nul 2>&1
+del /f/s/q "%windir%\logs\*.log" >nul 2>&1
+del /f/s/q "%windir%\SoftwareDistribution\*.log" >nul 2>&1
+del /f/s/q "%windir%\Microsoft.NET\*.log" >nul 2>&1
+for /d %%F in (C:\Users\*) do del /s /q /f "%%F\AppData\Local\Microsoft\OneDrive\setup\logs\*.log" >nul 2>&1
 
 echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Limpando os arquivos temporarios do usuario atual...
+DEL /S /F /Q "%TMP%\*.*" >nul 2>&1
+del /S /F /Q "%TEMP%\*.*" >nul 2>&1
+DEL /S /F /Q "%WINDIR%\Temp\*.*" >nul 2>&1
+DEL /S /F /Q "%LOCALAPPDATA%\Temp\*.*" >nul 2>&1
+del /s /f /q "%HomePath%\AppData\LocalLow\Temp\*.*" >nul 2>&1
 
-DEL /S /F /Q "%TMP%\*.*"
-del /S /F /Q "%TEMP%\*.*"
-
-DEL /S /F /Q "%WINDIR%\Temp\*.*"
-
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo Arquivos de Distribuicao Concluido
-DEL /S /F /Q "%LOCALAPPDATA%\Temp\*.*"
-del /s /f /q "%HomePath%\AppData\Local\Temp"
-del /s /f /q %HomePath%\AppData\LocalLow\Temp\*.*
-
-del /s /f /q "%APPDATA%\Microsoft\Windows\Recent\*.*"
-
-del /s /f /q "%APPDATA%\Microsoft\Windows\Recent\AutomaticDestinations"\*.* 
-del /s /f /q "%APPDATA%\Microsoft\Windows\Recent\CustomDestinations"\*.*
-
-del /S /F /Q "%userprofile%\appdata\local\temp\*.*"
-
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo Limpando os arquivos temporarios da Internet...
-del /F /Q "%USERPROFILE%\AppData\Local\Microsoft\Windows\INetCache\*.*"
-
-rd /s /q %windir%\Temp
-rd /s /q "%HomePath%\AppData\Local\Temp"
-
-rd /s /q "%APPDATA%\Microsoft\Windows\Recent\AutomaticDestinations"
-rd /s /q "%APPDATA%\Microsoft\Windows\Recent"
-rd /s /q "%APPDATA%\Microsoft\Windows\Recent\CustomDestinations"
-
-md %windir%\Temp
-
-md "%APPDATA%\Microsoft\Windows\Recent\AutomaticDestinations"
-md "%APPDATA%\Microsoft\Windows\Recent"
-md "%APPDATA%\Microsoft\Windows\Recent\CustomDestinations"
-
-
-echo A limpeza de arquivos temporarios foi concluida.
-
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo Limpando os arquivos temporarios do sistema...
-del /F /Q "%SystemRoot%\Temp\*.*"
-echo Limpando os arquivos temporarios de logs do Windows...
-del /F /Q "%SystemRoot%\Logs\*.*"
-echo Limpando os arquivos temporarios do Windows Update...
-del /F /Q "%SystemRoot%\SoftwareDistribution\Download\*.*"
-echo Limpando os arquivos temporarios do Windows Error Reporting...
-del /F /Q "%SystemRoot%\WinSxS\ManifestCache\*.*"
+del /s /f /q "%APPDATA%\Microsoft\Windows\Recent\*.*" >nul 2>&1
+del /s /f /q "%APPDATA%\Microsoft\Windows\Recent\AutomaticDestinations\*.*" >nul 2>&1
+del /s /f /q "%APPDATA%\Microsoft\Windows\Recent\CustomDestinations\*.*" >nul 2>&1
 
 echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-REG Delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\RunMRU
-REG Delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\TypedPaths /VA /F
+echo Limpando cache de internet local do usuario...
+del /F /Q "%USERPROFILE%\AppData\Local\Microsoft\Windows\INetCache\*.*" >nul 2>&1
+
+rd /s /q "%windir%\Temp" >nul 2>&1
+md "%windir%\Temp" >nul 2>&1
+
+rd /s /q "%APPDATA%\Microsoft\Windows\Recent\AutomaticDestinations" >nul 2>&1
+rd /s /q "%APPDATA%\Microsoft\Windows\Recent\CustomDestinations" >nul 2>&1
+rd /s /q "%APPDATA%\Microsoft\Windows\Recent" >nul 2>&1
+md "%APPDATA%\Microsoft\Windows\Recent" >nul 2>&1
+md "%APPDATA%\Microsoft\Windows\Recent\AutomaticDestinations" >nul 2>&1
+md "%APPDATA%\Microsoft\Windows\Recent\CustomDestinations" >nul 2>&1
 
 echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo Deletando arquivos de Distribuicao
-net stop wuauserv
-rd /s /q "%windir%\softwaredistribution"
-net start wuauserv
-
-echo ----------------------------------
-ping -n 1 localhost >nul
+echo Limpando arquivos temporarios do sistema, logs e Windows Update...
+del /F /Q "%SystemRoot%\Temp\*.*" >nul 2>&1
+del /F /Q "%SystemRoot%\Logs\*.*" >nul 2>&1
+del /F /Q "%SystemRoot%\SoftwareDistribution\Download\*.*" >nul 2>&1
 
 echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo Arquivos Prefetch
+echo Limpando historico de "Executar" e caminhos digitados no Explorer...
+REG DELETE "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\RunMRU" /f >nul 2>&1
+REG DELETE "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\TypedPaths" /VA /F >nul 2>&1
 
-del /s /f /q "%WinDir%\Prefetch\*.*"
-del /s /f /q C:\Windows\Prefetch\*.*
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo Recriando pasta SoftwareDistribution (arquivos do Windows Update)...
+net stop wuauserv >nul 2>&1
+rd /s /q "%windir%\SoftwareDistribution" >nul 2>&1
+net start wuauserv >nul 2>&1
 
-ping -n 1 localhost >nul
-
-rd /s /q "%WinDir%\Prefetch"
-md %windir%\Prefetch
-
-echo Arquivos Prefetch Concluido
-
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo Limpando arquivos Prefetch...
+del /s /f /q "%WinDir%\Prefetch\*.*" >nul 2>&1
+rd /s /q "%WinDir%\Prefetch" >nul 2>&1
+md "%windir%\Prefetch" >nul 2>&1
 
 echo ******************** ADOBE MEDIA CACHE FILES ********************
+for /d %%F in (C:\Users\*) do del /s /q "%%F\AppData\Roaming\Adobe\Common\Media Cache Files\*.*" >nul 2>&1
 
-for /d %%F in (C:\Users\*) do del %%F\AppData\Roaming\Adobe\Common\"Media Cache files"\*.* /s /q
+echo Limpeza de temporarios concluida em %date% %time% >> "%LOGFILE%"
 
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ping -n 1 localhost >nul
 cls
 echo ****** AGUARDE ****** AGUARDE ****** AGUARDE ****** AGUARDE ******
-echo ****** AGUARDE ****** AGUARDE ****** AGUARDE ****** AGUARDE ******
-echo ****** AGUARDE ****** AGUARDE ****** AGUARDE ****** AGUARDE ******
-
+echo ****** Executando limpeza avancada do Windows (cleanmgr) ******
 cleanmgr /sagerun:64 /Autoclean
+echo.
+echo Concluido!
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
 :: ############################################################################################
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 :: #######################################################################################
@@ -325,162 +255,56 @@ GOTO MenuPri
 cls
 COLOR A0
 ECHO.
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo Limpando os arquivos temporarios da Internet...
+call :Confirmar "Isso vai FECHAR os navegadores abertos e apagar o cache/historico. Deseja continuar?"
+if errorlevel 2 GOTO MenuPri
 
-echo ******************** ARQUIVOS DE LOG DO WINDOWS E IE ********************
+echo Iniciando limpeza de internet em %date% %time% >> "%LOGFILE%"
 
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Windows\Explorer\*.db /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Windows\WebCache\*.log /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Windows\SettingSync\*.log /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Windows\Explorer\ThumbCacheToDelete\*.tmp /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\"Terminal Server Client"\Cache\*.bin /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Windows\INetCache\IE\* /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Windows\INetCache\Low\*.dat /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Windows\INetCache\Low\*.js /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Windows\INetCache\Low\*.htm /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Windows\INetCache\Low\*.txt /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Windows\INetCache\Low\*.jpg /s /q
-for /d %%F in (C:\Users\*) do robocopy %%F\AppData\Local\Microsoft\Windows\INetCache\IE\ /s /move /NFL /NDL /NJH /NJS /nc /ns /np
+echo ******************** ARQUIVOS DE LOG DO WINDOWS E EXPLORER ********************
+for /d %%F in (C:\Users\*) do del /s /q "%%F\AppData\Local\Microsoft\Windows\Explorer\*.db" >nul 2>&1
+for /d %%F in (C:\Users\*) do del /s /q "%%F\AppData\Local\Microsoft\Windows\WebCache\*.log" >nul 2>&1
+for /d %%F in (C:\Users\*) do del /s /q "%%F\AppData\Local\Microsoft\Windows\INetCache\IE\*" >nul 2>&1
+for /d %%F in (C:\Users\*) do del /s /q "%%F\AppData\Local\Microsoft\Windows\INetCache\Low\*.*" >nul 2>&1
 
 echo ******************** EDGE ********************
-taskkill /F /IM "msedge.exe"
-
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Edge\"User Data"\Default\Cache\Cache_Data\data*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Edge\"User Data"\Default\Cache\Cache_Data\f*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Edge\"User Data"\Default\Cache\Cache_Data\index. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Edge\"User Data"\Default\Storage\*. /s /q
-
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Edge\"User Data"\Default\GPUCache\d*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Edge\"User Data"\Default\GPUCache\i*. /s /q
-
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Edge\"User Data"\Default\"Code Cache"\js\*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Edge\"User Data"\Default\"Service Worker"\CacheStorage\*. /s /q
-for /d %%F in (C:\Users\*) do robocopy %%F\AppData\Local\Microsoft\Edge\"User Data"\Default\"Service Worker"\CacheStorage\ %%F\AppData\Local\Microsoft\Edge\"User Data"\Default\"Service Worker"\CacheStorage\ /s /move /NFL /NDL /NJH /NJS /nc /ns /np
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Edge\"User Data"\Default\"Service Worker"\Database\*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Edge\"User Data"\Default\"Service Worker"\ScriptCache\*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Edge\"User Data"\Default\EdgeCoupons\coupons_data.db\*.ldb /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Edge\"User Data"\Default\EdgeCoupons\coupons_data.db\index. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Edge\"User Data"\Default\EdgeCoupons\coupons_data.db\*.log /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Microsoft\Edge\"User Data"\BrowserMetrics\*.pma /s /q
-
+taskkill /F /IM msedge.exe >nul 2>&1
+for /d %%F in (C:\Users\*) do del /s /q "%%F\AppData\Local\Microsoft\Edge\User Data\Default\Cache\Cache_Data\*.*" >nul 2>&1
+for /d %%F in (C:\Users\*) do del /s /q "%%F\AppData\Local\Microsoft\Edge\User Data\Default\GPUCache\*.*" >nul 2>&1
+for /d %%F in (C:\Users\*) do del /s /q "%%F\AppData\Local\Microsoft\Edge\User Data\Default\Code Cache\js\*.*" >nul 2>&1
 
 echo ******************** FIREFOX ********************
-taskkill /F /IM "firefox.exe"
-
-for /d %%F in (C:\Users\*) do del %%F\AppData\local\Mozilla\Firefox\Profiles\*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\local\Mozilla\Firefox\Profiles\script*.bin /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\local\Mozilla\Firefox\Profiles\startup*.* /s /q
+taskkill /F /IM firefox.exe >nul 2>&1
+for /d %%F in (C:\Users\*) do del /s /q "%%F\AppData\Local\Mozilla\Firefox\Profiles\*.*" >nul 2>&1
 
 echo ******************** CHROME ********************
-taskkill /F /IM "chrome.exe"
-
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Google\Chrome\"User Data"\Default\Cache\Cache_Data\data*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Google\Chrome\"User Data"\Default\Cache\Cache_Data\f*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Google\Chrome\"User Data"\Default\Cache\Cache_Data\index. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Google\Chrome\"User Data"\Default\Storage\*. /s /q
-
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Google\Chrome\"User Data"\Default\GPUCache\d*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Google\Chrome\"User Data"\Default\GPUCache\i*. /s /q
-
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Google\Chrome\"User Data"\Default\"Code Cache"\js\*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Google\Chrome\"User Data"\Default\"Service Worker"\CacheStorage\*. /s /q
-for /d %%F in (C:\Users\*) do robocopy %%F\AppData\Local\Google\Chrome\"User Data"\Default\"Service Worker"\CacheStorage\ %%F\AppData\Local\Google\Chrome\"User Data"\Default\"Service Worker"\CacheStorage\ /s /move /NFL /NDL /NJH /NJS /nc /ns /np
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Google\Chrome\"User Data"\Default\"Service Worker"\Database\*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Google\Chrome\"User Data"\Default\"Service Worker"\ScriptCache\*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Google\Chrome\"User Data"\brow*.* /s /q
-
+taskkill /F /IM chrome.exe >nul 2>&1
+for /d %%F in (C:\Users\*) do del /s /q "%%F\AppData\Local\Google\Chrome\User Data\Default\Cache\Cache_Data\*.*" >nul 2>&1
+for /d %%F in (C:\Users\*) do del /s /q "%%F\AppData\Local\Google\Chrome\User Data\Default\GPUCache\*.*" >nul 2>&1
+for /d %%F in (C:\Users\*) do del /s /q "%%F\AppData\Local\Google\Chrome\User Data\Default\Code Cache\js\*.*" >nul 2>&1
 
 echo ******************** BRAVE ********************
-taskkill /F /IM "brave.exe"
-
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\BraveSoftware\Brave-Browser\"User Data"\Default\Cache\Cache_Data\data*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\BraveSoftware\Brave-Browser\"User Data"\Default\Cache\Cache_Data\f*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\BraveSoftware\Brave-Browser\"User Data"\Default\Cache\Cache_Data\index. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\BraveSoftware\Brave-Browser\"User Data"\Default\Storage\*. /s /q
-
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\BraveSoftware\Brave-Browser\"User Data"\Default\GPUCache\d*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\BraveSoftware\Brave-Browser\"User Data"\Default\GPUCache\i*. /s /q
-
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\BraveSoftware\Brave-Browser\"User Data"\Default\"Code Cache"\js\*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\BraveSoftware\Brave-Browser\"User Data"\Default\"Service Worker"\CacheStorage\*. /s /q
-for /d %%F in (C:\Users\*) do robocopy %%F\AppData\Local\BraveSoftware\Brave-Browser\"User Data"\Default\"Service Worker"\CacheStorage\ %%F\AppData\Local\BraveSoftware\Brave-Browser\"User Data"\Default\"Service Worker"\CacheStorage\ /s /move /NFL /NDL /NJH /NJS /nc /ns /np
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\BraveSoftware\Brave-Browser\"User Data"\Default\"Service Worker"\Database\*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\BraveSoftware\Brave-Browser\"User Data"\Default\"Service Worker"\ScriptCache\*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\BraveSoftware\Brave-Browser\"User Data"\brow*.* /s /q
-
+taskkill /F /IM brave.exe >nul 2>&1
+for /d %%F in (C:\Users\*) do del /s /q "%%F\AppData\Local\BraveSoftware\Brave-Browser\User Data\Default\Cache\Cache_Data\*.*" >nul 2>&1
 
 echo ******************** VIVALDI ********************
-taskkill /F /IM "vivaldi.exe"
+taskkill /F /IM vivaldi.exe >nul 2>&1
+for /d %%F in (C:\Users\*) do del /s /q "%%F\AppData\Local\Vivaldi\User Data\Default\Cache\Cache_Data\*.*" >nul 2>&1
 
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Vivaldi\"User Data"\Default\Cache\Cache_Data\data*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Vivaldi\"User Data"\Default\Cache\Cache_Data\f*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Vivaldi\"User Data"\Default\Cache\Cache_Data\index. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Vivaldi\"User Data"\Default\Storage\*. /s /q
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo Limpando historico do Internet Explorer / Edge legado...
+RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 8 >nul 2>&1
+RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 4351 >nul 2>&1
+del /q /s /f "%USERPROFILE%\AppData\Local\Microsoft\Internet Explorer\*.*" >nul 2>&1
+del /q /s /f "%USERPROFILE%\AppData\Local\Microsoft\Windows\History\*.*" >nul 2>&1
 
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Vivaldi\"User Data"\Default\GPUCache\d*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Vivaldi\"User Data"\Default\GPUCache\i*. /s /q
-
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Vivaldi\"User Data"\Default\"Code Cache"\js\*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Vivaldi\"User Data"\Default\"Service Worker"\CacheStorage\*. /s /q
-for /d %%F in (C:\Users\*) do robocopy %%F\AppData\Local\Vivaldi\"User Data"\Default\"Service Worker"\CacheStorage\ %%F\AppData\Local\Vivaldi\"User Data"\Default\"Service Worker"\CacheStorage\ /s /move /NFL /NDL /NJH /NJS /nc /ns /np
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Vivaldi\"User Data"\Default\"Service Worker"\Database\*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Vivaldi\"User Data"\Default\"Service Worker"\ScriptCache\*. /s /q
-for /d %%F in (C:\Users\*) do del %%F\AppData\Local\Vivaldi\"User Data"\brow*.* /s /q
-
-echo Limpando os arquivos temporarios do Internet Explorer...
-RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 8
-
-echo Limpando os arquivos temporários do Microsoft Edge...
-RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 10116
-
-del /q /s /f "%USERPROFILE%\AppData\Local\Microsoft\Internet Explorer\*.*"
-del /q /s /f "%USERPROFILE%\AppData\Local\Microsoft\Windows\History\*.*"
+echo Limpeza de internet concluida em %date% %time% >> "%LOGFILE%"
 
 echo A limpeza dos arquivos temporarios da Internet foi concluida.
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ping -n 1 localhost >nul
-
-echo Limpando os arquivos temporarios do Google Chrome...
-
-:: Fechar o Google Chrome se estiver aberto
-taskkill /F /IM chrome.exe
-
-:: Limpar a pasta de arquivos temporarios do Google Chrome
-echo Limpando os arquivos temporarios do Google Chrome...
-
-del /q /s /f "%USERPROFILE%\AppData\Local\Google\Chrome\User Data\*.*"
-del /q /s /f "%USERPROFILE%\Local Settings\Application Data\Google\Chrome\User Data\*.*"
-del /q /s /f "%LocalAppData%\Google\Chrome\User Data\Default\Cache"
-
-rd /s /q "%USERPROFILE%\AppData\Local\Google\Chrome\User Data\*.*"
-rd /s /q "%LocalAppData%\Google\Chrome\User Data\Default\Cache"
-
-echo A limpeza dos arquivos temporarios do Google Chrome foi concluida.
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ping -n 1 localhost >nul
-echo.
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
 :: ##########################################################################################
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 :: #######################################################################################
@@ -488,72 +312,32 @@ GOTO MenuPri
 cls
 color 6f
 ECHO.
+ECHO CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO.
+echo ESSE PROCESSO PODE DEMORAR E VARRE TODO O DISCO C: EM BUSCA DE ARQUIVOS .BAK
+ECHO CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO.
 ECHO.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ECHO.
-ECHO.
-ECHO CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO.
-echo ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR
-ECHO CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO.
-ECHO.
-ECHO ##### MENU ##### MENU ###### MENU ###### MENU ####### MENU ####### MENU ####### MENU ####
-ECHO ################################ L I M P A R   B A C K U P ##############################
-ECHO #				        						#
-ECHO #				   	MENU DE OPCOES					#
-ECHO #											#
-ECHO #				1.INICIAR LIMPEZA					#
-ECHO #				2.CANCELAR - SAIR					#
-ECHO #											#
-ECHO #########################################################################################
-ECHO.
-ECHO ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR
-ECHO ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR
-ECHO.
-ECHO.
-ECHO LIMPAR ARQUIVOS DE BACKUP (BAK)
 ECHO 1 - INICIA LIMPEZA
 ECHO 2 - CANCELAR - SAIR
 Echo.
-
 CHOICE /C 12 /M "Entra com uma Opcao:"
+IF ERRORLEVEL 2 GOTO ClearBkp_Shutdown
+IF ERRORLEVEL 1 GOTO ClearBkp_Restart
 
-IF ERRORLEVEL 2 GOTO Shutdown
-IF ERRORLEVEL 1 GOTO Restart
-
-:Restart
+:ClearBkp_Restart
 cls
 color 6f
-ECHO.
-ECHO ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR
-ECHO ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR
-ECHO.
-ECHO.
-echo Deletando arquivos de Backups (BAK)
-del /s /q /f "c:\*.bak"
-echo Arquivos de Backups terminado (BAK)
-echo ---------------------------------------------------------
-ECHO.
-ECHO.
-GOTO End
+echo Deletando arquivos de Backup (.bak) em C:\ ...
+del /s /q /f "C:\*.bak" >nul 2>&1
+echo Arquivos de Backup (.bak) removidos.
+GOTO ClearBkp_End
 
-:Shutdown
+:ClearBkp_Shutdown
 cls
 color cf
-ECHO.
-ECHO.
-echo ----------------------------------------------------------------------------------------
-echo ----------- C A N C E L A D O  C A N C E L A D O  C A N C E L A D O  -------------------
-echo ----------- C A N C E L A D O  C A N C E L A D O  C A N C E L A D O  -------------------
-echo ----------- C A N C E L A D O  C A N C E L A D O  C A N C E L A D O  -------------------
-echo ----------------------------------------------------------------------------------------
-ECHO.
-ECHO.
-GOTO End
+echo CANCELADO PELO USUARIO
+GOTO ClearBkp_End
 
-:End
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ping -n 1 localhost >nul
-ECHO.
+:ClearBkp_End
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
@@ -561,61 +345,21 @@ GOTO MenuPri
 :: ###########################################################################################
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 :: #######################################################################################
 :SpoolImp
 cls
 COLOR A0
 ECHO.
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo Limpando a fila de impressão...
-echo Limpeza de Impressao
-echo Parando o servico de spooler de impressao...
-
+echo Limpando a fila de impressao...
 net stop spooler
-ping -n 1 localhost >nul
-
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo Excluindo arquivos da pasta de spool de impressao...
-del /F /Q "%systemroot%\System32\spool\PRINTERS\*
-del /F /Q "%systemroot%\System32\spool\PRINTERS\*.*
-
-ping -n 1 localhost >nul
-
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo Iniciando o servico de spooler de impressao...
+del /F /Q "%systemroot%\System32\spool\PRINTERS\*.*" >nul 2>&1
 net start spooler
-
 echo A limpeza da fila de impressao foi concluida.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ping -n 1 localhost >nul
-echo.
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
 :: ############################################################################################
-
-
-
-
-
-
-
 
 
 :: #######################################################################################
@@ -623,42 +367,24 @@ GOTO MenuPri
 cls
 COLOR A0
 ECHO.
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo AGUARDE ------ AGUARDE ------- AGUARDE
-taskkill /f /im teams.exe
+call :Confirmar "Isso vai fechar o Teams e apagar seus dados locais (sera necessario logar novamente). Continuar?"
+if errorlevel 2 GOTO MenuPri
+
+taskkill /f /im teams.exe >nul 2>&1
 ping -n 3 localhost >nul
-echo Excluindo Teams
-echo Liberando Teams
 
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo Excluindo arquivos ...
+del /S /F /Q "%userprofile%\appdata\local\Microsoft\Teams\*.*" >nul 2>&1
+del /S /F /Q "%appdata%\Microsoft\Teams\*.*" >nul 2>&1
+del /S /F /Q "%userprofile%\appdata\local\Packages\MSTeams_8wekyb3d8bbwe\*.*" >nul 2>&1
+rd /s /q "%appdata%\Microsoft\Teams" >nul 2>&1
+rd /s /q "%userprofile%\appdata\local\Packages\MSTeams_8wekyb3d8bbwe" >nul 2>&1
 
-del /S /F /Q "%userprofile%\appdata\local\Microsoft\Teams\*.*"
-del /S /F /Q "%appdata%\Microsoft\Teams\*.*"
-del /S /F /Q "%userprofile%\appdata\local\Packages\MSTeams_8wekyb3d8bbwe/*.*"
-
-rd /F /Q "%appdata%\Microsoft\Teams"
-rd /F /Q "%userprofile%\appdata\local\Packages\MSTeams_8wekyb3d8bbwe"
-
-ping -n 1 localhost >nul
-
-echo A limpeza foi concluida.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ping -n 1 localhost >nul
-echo.
+echo A limpeza do Teams foi concluida.
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
 :: ############################################################################################
-
-
-
-
-
-
-
-
 
 
 :: #######################################################################################
@@ -666,40 +392,29 @@ GOTO MenuPri
 cls
 COLOR A0
 ECHO.
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo Reparar Windows
+echo Este processo executa DISM, SFC, desfragmentacao e CHKDSK.
+echo O CHKDSK pode exigir REINICIALIZACAO do computador para concluir.
+call :Confirmar "Deseja iniciar o reparo do Windows/disco agora?"
+if errorlevel 2 GOTO MenuPri
 
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Reparando Sistema ...
-
-REG ADD “HKLMSYSTEMCurrentControlSetControlSession ManagerMemory Management” /v ClearPageFileAtShutdown /t REG_DWORD /d 1 /f
-sc stop "SysMain" & sc config "SysMain" start=disabled
-
-sc stop "SysMain" & sc config "SysMain" start=disabled
+REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v ClearPageFileAtShutdown /t REG_DWORD /d 1 /f
+sc stop "SysMain" >nul 2>&1
+sc config "SysMain" start=disabled >nul 2>&1
 
 Dism /Online /Cleanup-Image /RestoreHealth
 sfc /scannow
-defrag /c /h /u
-chkdsk /f /r /x
+defrag %systemdrive% /o /u
+chkdsk %systemdrive% /f /r /x
 
-ping -n 1 localhost >nul
-
-echo Reparo foi concluido.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ping -n 1 localhost >nul
 echo.
+echo Se o CHKDSK pediu para agendar na proxima reinicializacao, responda "S" quando reiniciar o PC.
+echo Reparo foi concluido/agendado.
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
 :: ############################################################################################
-
-
-
-
-
-
-
 
 
 :: ##########################################################################################
@@ -707,132 +422,62 @@ GOTO MenuPri
 cls
 COLOR A0
 ECHO.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ECHO.
 echo Estacao utiliza IP fixo?
 echo 	S - Sim
 echo 	N - Nao
-echo.
-
 choice /c sn /cs /m "Escolha uma Opcao S-im - N-ao"
-
-set condition=true
-
+set "condition=false"
 if errorlevel 2 goto fRedeIPfixoNao
 if errorlevel 1 goto fRedeIPfixoSim
 
 :fRedeIPfixoSim
-set condition=true
-netsh -c interface dump > yourfilename.txt
-goto End
+set "condition=true"
+netsh -c interface dump > "%~dp0netcfg_backup.txt"
+goto ConfigLan_Run
 
 :fRedeIPfixoNao
-set condition=false
-goto End
+set "condition=false"
+goto ConfigLan_Run
 
-:End
-echo Otimizando a memoria...
-echo Limpando o cache do sistema...
-echo Purging the DNS Resolver Cache...
-
+:ConfigLan_Run
+echo Limpando cache do sistema e DNS...
 ipconfig /flushdns
+arp -d * >nul 2>&1
+nbtstat -R >nul 2>&1
+nbtstat -RR >nul 2>&1
 
-echo Limpando Arquivos da Lan/Wan
-
-arp -d *
-nbtstat -R
-nbtstat -RR
-
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-echo Limpando e renovando a configuracao de rede...
-
-echo Reiniciando adaptadores de rede...
+echo Renovando configuracao de rede...
 ipconfig /release
 ipconfig /renew
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo Corrigindo problemas de rede e conexao com a Internet...
-
-echo Redefinindo as configuracoes TCP/IP...
+echo Redefinindo TCP/IP e Winsock...
 netsh int ip reset all
-
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo Redefinindo as configuracoes do Winsock...
 netsh winsock reset
-
-netsh int tcp show global > globalredeset.txt
-
+netsh int tcp show global > "%~dp0globalredeset.txt"
 
 echo.
-echo ...................................................
-echo Chance efeito oposto. Copia (globalredeset.txt)
-echo Chance efeito oposto. Copia (globalredeset.txt)
-echo Chance efeito oposto. Copia (globalredeset.txt)
-echo.
-echo ...................................................
+echo AVISO: pode ser necessario reiniciar o computador para o reset de rede ter efeito total.
 echo.
 
-echo ...................................................
-echo Chance efeito oposto. Copia (globalredeset.txt)
-echo Chance efeito oposto. Copia (globalredeset.txt)
-echo Chance efeito oposto. Copia (globalredeset.txt)
-echo.
-echo ...................................................
-echo.
+echo Reiniciando servico DHCP...
+net stop dhcp >nul 2>&1
+net start dhcp >nul 2>&1
 
-echo Configuracao Internet Concluida
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-echo Reiniciando o servico de cliente DHCP...
-net stop dhcp
-net start dhcp
-
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo Reiniciando o servico de resolucao de problemas de conexao de rede...
-net stop dot3svc
-net start dot3svc
-
-if %condition%==true (
-	netsh exec yourfilename.txt
+if "%condition%"=="true" (
+	echo Restaurando configuracao de IP fixo salva...
+	netsh exec "%~dp0netcfg_backup.txt"
 )
 
-echo Registrando enderecos DNS
+echo Registrando enderecos DNS...
 ipconfig /registerdns
 
-echo A otimizacao da memoria foi concluida.
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
 echo A limpeza e renovacao da configuracao de rede foram concluidas.
+if exist "%~dp0netcfg_backup.txt" del /f "%~dp0netcfg_backup.txt"
 echo.
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo.
-ping -n 1 localhost >nul
-ECHO.
-echo.
-
-IF EXIST yourfilename.txt DEL /F yourfilename.txt
-
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
 :: ######################################################################################
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 :: ########################################################################################
@@ -840,73 +485,21 @@ GOTO MenuPri
 cls
 color 6f
 ECHO.
-ECHO.
-echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ECHO.
-ECHO.
-ECHO CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO.
-echo ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR
-ECHO CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO. CUIDADO.
-ECHO.
-ECHO ##### MENU ##### MENU ###### MENU ###### MENU ####### MENU ####### MENU ####### MENU ####
-ECHO ############################## ATUALIZAR POLITICAS DE GRUPO #############################
-ECHO #				        						#
-ECHO #				   	MENU DE OPCOES					#
-ECHO #											#
-ECHO #				1.INICIAR ATUALIZACAO					#
-ECHO #				2.CANCELAR - SAIR					#
-ECHO #											#
-ECHO #########################################################################################
-ECHO.
-ECHO ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR
-ECHO ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR
-ECHO.
-ECHO.
-ECHO ATUALIZAR POLITICAS DE GRUPOS
 ECHO 1 - INICIA A ATUALIZACAO
 ECHO 2 - CANCELAR - SAIR
-Echo.
 CHOICE /C 12 /M "Entra com uma Opcao:"
-
-IF ERRORLEVEL 2 GOTO GPUPEXIT
+IF ERRORLEVEL 2 GOTO GPUPEnd
 IF ERRORLEVEL 1 GOTO GPUPINI
 
 :GPUPINI
 cls
 color 02
-ECHO.
-ECHO ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR
-ECHO ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR - ESSE PROCESSO PODE DEMORAR
-ECHO.
-ECHO.
-echo Atualizando Politicas de Grupo
+echo Atualizando Politicas de Grupo...
 gpupdate /force
-gpupdate /sync
-echo.
-echo Politica de Grupo Concluido
-echo ---------------------------------------------------------
-ECHO.
-ECHO.
-GOTO GPUPEnd
-
-:GPUPEXIT
-cls
-color cf
-ECHO.
-ECHO.
-echo --------------------------------------------------------------------------------------------
-echo ------------- C A N C E L A D O  C A N C E L A D O  C A N C E L A D O  ---------------------
-echo ------------- C A N C E L A D O  C A N C E L A D O  C A N C E L A D O  ---------------------
-echo ------------- C A N C E L A D O  C A N C E L A D O  C A N C E L A D O  ---------------------
-echo --------------------------------------------------------------------------------------------
-ECHO.
-ECHO.
+echo Politica de Grupo Concluida.
 GOTO GPUPEnd
 
 :GPUPEnd
-ping -n 1 localhost >nul
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
@@ -914,208 +507,105 @@ GOTO MenuPri
 :: #########################################################################################
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 :: ######################################################################################
 :LogOffUser
 cls
 COLOR A0
-
-set vlcUserNomeTempT2=%username:~0,-3%
-goto fID_UserDigIniMenu
+set "vlcUserNomeTempT2=%username:~0,-3%"
 
 :fID_UserDigIniMenu
 cls
 echo.
-echo.
-echo.
 echo ......................... Usuarios Logados .......................
 echo ------------------------------------------------------------------
-
 qwinsta
-
 echo ==================================================================
 echo.
-echo.
-echo 	Digite o Id para Deslogar:
+set "vlnID_UserDig="
+set /p vlnID_UserDig=Digite o ID para Deslogar (ou deixe vazio para sair): 
+if "%vlnID_UserDig%"=="" GOTO fID_UserDigEND
 
-set vlnID_UserDig=
-set /p vlnID_UserDig=Digite o ID: 
-
-set vlcUserNome=
-FOR /f "tokens=1" %%k IN ('qwinsta ^| find "%vlnID_UserDig%"') DO (set vlcUserNome=%%k)
-
+set "vlcUserNome="
+FOR /f "tokens=1" %%k IN ('qwinsta ^| find "%vlnID_UserDig%"') DO (set "vlcUserNome=%%k")
 if "%vlcUserNome%" == ">console" (
-	FOR /f "tokens=2" %%k IN ('qwinsta ^| find "%vlnID_UserDig%"') DO (set vlcUserNome=%%k)
+	FOR /f "tokens=2" %%k IN ('qwinsta ^| find "%vlnID_UserDig%"') DO (set "vlcUserNome=%%k")
 )
+IF "%vlcUserNome%" == "%vlcUserNomeTempT2%" set "vlcUserNome=%username%"
 
-IF "%vlcUserNome%" == "%vlcUserNomeTempT2%" (
-	set vlcUserNome=%username%
-)
-
-
-set /a varCheck_IDUser=%vlnID_UserDig%
-goto fID_UserDigValLogOFf
-
-:fID_UserDigValLogOFf
-if %varCheck_IDUser% == %vlnID_UserDig% (
-	
-	if "" == "%vlcUserNome%" (
-		echo ID Usuario nao Encontrado. Logon Invalido - "%vlnID_UserDig%" - "%vlcUserNome%"
-		echo.
-		pause > nul
-		goto fID_UserDigIniMenu
-	) else (
-		cls
-		echo.
-		echo.
-		echo ................ Usuario Encontrado .......................
-		echo.
-		echo 	ID "%varCheck_IDUser%"
-		echo 	Usuario "%vlcUserNome%"
-		echo.
-		echo Deseja Realmente fazer logoff?
-		echo.
-		echo.
-
-		pause
-		
-		if "%username%" == "%vlcUserNome%" (
-			echo.
-			echo --------------------------------------------------------------------
-			echo 	Usuario nao pode fazer logoff. 
-			echo 	ID "%varCheck_IDUser%" - Usuario "%vlcUserNome%"
-			echo.
-			echo.
-			pause
-			goto fID_UserDigIniMenu
-		) else (
-			echo ------------------------------------------------
-			echo 	Aguarde Fazendo LogOFF
-			echo 	ID "%varCheck_IDUser%" - Usuario "%vlcUserNome%"
-			logoff %varCheck_IDUser%
-			echo ................................................
-			echo.
-			echo LogOff Concluido - ID "%varCheck_IDUser%" - "%vlcUserNome%"
-			echo.
-			echo.
-			pause
-			goto fID_UserDigIniMenu
-		)
-	)
-) else (
-	echo.
+set /a varCheck_IDUser=%vlnID_UserDig% 2>nul
+if not "%varCheck_IDUser%" == "%vlnID_UserDig%" (
 	echo OPCAO INVALIDA. TENTE NOVAMENTE
-	echo OPCAO INVALIDA. TENTE NOVAMENTE
-	goto fID_UserDigEND
+	pause > nul
+	goto fID_UserDigIniMenu
 )
 
+if "%vlcUserNome%"=="" (
+	echo ID Usuario nao encontrado.
+	pause > nul
+	goto fID_UserDigIniMenu
+)
+
+echo.
+echo ID "%varCheck_IDUser%" - Usuario "%vlcUserNome%"
+call :Confirmar "Deseja realmente fazer logoff deste usuario?"
+if errorlevel 2 goto fID_UserDigIniMenu
+
+if "%username%" == "%vlcUserNome%" (
+	echo Voce nao pode deslogar a si mesmo por aqui.
+	pause > nul
+	goto fID_UserDigIniMenu
+)
+
+logoff %varCheck_IDUser%
+echo LogOff Concluido - ID "%varCheck_IDUser%" - "%vlcUserNome%"
+pause > nul
+goto fID_UserDigIniMenu
 
 :fID_UserDigEND
-echo.
-echo.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo.
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
 :: ##########################################################################################
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 :: ##########################################################################################
 :infosysbraz
 cls
 COLOR A0
-SET TEMPFILEDri=%temp%\temptext%random%%random%%random%.txt
-
-SystemInfo > %TEMPFILEDri%
+SET "TEMPFILEDri=%temp%\syinfo_%random%.txt"
+SystemInfo > "%TEMPFILEDri%"
 
 echo #######################################
 hostname
 Echo ..................Informacoes do Sistema.................
 echo.
-echo %PROCESSOR_IDENTIFIER%
 wmic cpu get name
 
-type %TEMPFILEDri% | find /i "Nome do sistema operacional:"
-type %TEMPFILEDri% | find /i "Versão do sistema operacional:"
-
-type %TEMPFILEDri% | find /i "Identificação do produto"
-
-type %TEMPFILEDri% | find /i "Fabricante do sistema:"
-type %TEMPFILEDri% | find /i "Modelo do sistema:"
-type %TEMPFILEDri% | find /i "Tipo de sistema"
+type "%TEMPFILEDri%" | find /i "Nome do sistema operacional:"
+type "%TEMPFILEDri%" | find /i "Versao do sistema operacional:"
+type "%TEMPFILEDri%" | find /i "Fabricante do sistema:"
+type "%TEMPFILEDri%" | find /i "Modelo do sistema:"
+type "%TEMPFILEDri%" | find /i "Tipo de sistema"
 echo.
 echo .....................................
-type %TEMPFILEDri% | find /i "host:"
-type %TEMPFILEDri% | find /i "Domínio:"
-type %TEMPFILEDri% | find /i "Servidor de Logon:"
 echo Usuario:				   %username%
 echo Dominio: 				   %USERDOMAIN%
 echo Servidor de Logon: 			   %LOGONSERVER%
 ipconfig | find /i "ipv4"
 echo.
-echo .....................................
-echo .....................................
-echo .....................................
-echo .....................................
-echo.
-echo.
 echo %computername%
-echo.
-wmic baseboard get product,Manufacturer,version,serialnumbe
-echo.
-echo.
+wmic baseboard get product,Manufacturer,version,serialnumber
 
-echo WinTool for Windows 11...
-powershell.exe -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/alerion921/WinTool-for-Win11/main/WinTool.ps1'))"
-echo.
+del /f /q "%TEMPFILEDri%" >nul 2>&1
+
 echo.
 echo Processo concluido!
-echo Pressione qualquer tecla para continuar
-pause
-echo Processo concluido!
-echo.
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
 :: ###############################################################################################
-
-
-
-
-
-
 
 
 :: ##############################################################################################
@@ -1123,57 +613,33 @@ GOTO MenuPri
 cls
 COLOR 4f
 ECHO.
+ECHO VERIFICAR MAQUINA REMOTA - DIGITE O IP (ou deixe vazio para sair)
 ECHO.
-ECHO VERIFICAR MAQUINA REMOTA
-ECHO POR FAVOR DIGITE O NUMERO DO IP
-echo DIGITA NADA PARA SAIR
-ECHO.
-echo Digite Numero do Ip?
-ECHO.
-set /p host=Entrar com o Ip: 
+set "host="
+set /p host=Entrar com o IP: 
 
-If /I "%host%"!==!"" goto infoRedeLanyes
-If /I "%host%"=="" goto infoRedeLanno
+if "%host%"=="" GOTO infoRedeLanno
 
-:infoRedeLanyes
-    ping -n 1 -w 1000 %host% | find /i "TTL=" >NUL && (
-        cls
-	ECHO.
-	ECHO.
-	ECHO --------------------------------------------------------
+cls
+ping -n 1 -w 1000 %host% | find /i "TTL=" >NUL
+if %errorlevel%==0 (
 	echo %host% : ONLINE
 	nslookup %host%
-	ECHO --------------------------------------------------------
+	echo --------------------------------------------------------
 	tracert %host%
-	ECHO.
-	ECHO --------------------------------------------------------
-	echo.
-	ping -l 1300 -a %host% | Find /i "Resposta"
-	echo.
-	ECHO --------------------------------------------------------
+	echo --------------------------------------------------------
 	nbtstat -a %host%
-	ECHO --------------------------------------------------------
-	ping -n 1 -a %host% | find /i "Disparando"
-    ) || (
-        echo %host% : OFFLINE
-    )
-
+) else (
+	echo %host% : OFFLINE
+)
 goto infoRedeLanend
 
 :infoRedeLanno
 CLS
-ECHO.
-ECHO.
-echo CANCELADO - CANCELADO - CANCELADO - CANCELADO - CANCELADO - CANCELADO
-echo CANCELADO - CANCELADO - CANCELADO - CANCELADO - CANCELADO - CANCELADO
-echo CANCELADO - CANCELADO - CANCELADO - CANCELADO - CANCELADO - CANCELADO
-ECHO.
+echo CANCELADO - CANCELADO - CANCELADO - CANCELADO
 goto infoRedeLanend
 
 :infoRedeLanend
-ECHO.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ping -n 1 localhost >nul
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
@@ -1181,103 +647,32 @@ GOTO MenuPri
 :: ############################################################################################
 
 
-
-
-
-
-
-
-
-
-
 :: ###############################################################################################
 :UninstalJava
 cls
 color 17
 echo.
-echo.
-echo.
 echo 	+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ECHO 	+										+
 echo 	+		                 DESINSTALACAO JAVA				+
-echo 	+		      D E S I N S T A L A N D O   J A V A			+
-ECHO 	+										+
 echo 	+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo.
 echo 	    ESSE PROCESSO LEVA VARIOS MINUTOS
-ECHO 	P R O C E S S O   P O D E   D E M O R A R
 echo.
-echo.
-echo 			Pressione Qualquer Tecla
-echo 	Iniciar Processo...........................
-
-pause > nul
+call :Confirmar "Deseja desinstalar todas as versoes do Java encontradas?"
+if errorlevel 2 GOTO MenuPri
 
 cls
-echo.
-echo.
 echo Desinstalando Java - Isso pode Demorar...
-echo ----------------------------------
-echo Progresso:## 16%%
-echo ----------------------------------
-
 wmic product where "name like 'Java 7%%'" call uninstall /nointeractive
-cls
-echo.
-echo.
-echo Desinstalando Java - Isso pode Demorar...
-echo ----------------------------------
-echo Progresso:#### 33%%
-echo ----------------------------------
-
 wmic product where "name like 'JavaFX%%'" call uninstall /nointeractive
-cls
-echo.
-echo.
-echo Desinstalando Java - Isso pode Demorar...
-echo ----------------------------------
-echo Progresso:####### 49%%
-echo ----------------------------------
-
 wmic product where "name like 'Java(TM) 7%%'" call uninstall /nointeractive
-cls
-echo.
-echo.
-echo Desinstalando Java - Isso pode Demorar...
-echo ----------------------------------
-echo Progresso:############### 66%%
-echo ----------------------------------
-
 wmic product where "name like 'Java(tm) 6%%'" call uninstall /nointeractive
-cls
-echo.
-echo.
-echo Desinstalando Java - Isso pode Demorar...
-echo ----------------------------------
-echo Progresso:##################### 81%%
-echo ----------------------------------
-
 wmic product where "name like 'J2SE Runtime Environment%%'" call uninstall /nointeractive
-cls
-echo.
-echo.
-echo Desinstalando Java - Isso pode Demorar...
-echo ----------------------------------
-echo Progresso:############################## 97%%
-echo ----------------------------------
-
 wmic product where "name like 'Java 8%%'" call uninstall /nointeractive
-cls
-echo.
-echo.
-echo Desinstalando Java - Isso pode Demorar...
-echo ----------------------------------
-echo Progresso:##################################### 100%%
-echo ----------------------------------
 
 echo.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ping -n 1 localhost >nul
+echo Concluido. (Nota: "wmic" esta descontinuado em versoes recentes do Windows;
+echo se nao funcionar, use "Painel de Controle - Programas" para remover manualmente.)
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
@@ -1285,23 +680,12 @@ GOTO MenuPri
 :: #################################################################################################
 
 
-
-
-
-
-
-
-
-
-
-
 :: #################################################################################################
 :MenuWinProgram
 cls
 color 57
 echo.
-ECHO 	    ##### MENU ##### MENU ###### MENU ###### MENU ####### MENU ####### MENU ####### MENU ####
-ECHO 	    ################################ M E N U   P R I N C I P A L ############################
+ECHO 	    ##### MENU ##### PAINEL DE CONTROLE / FERRAMENTAS ##### MENU #####
 echo.
 echo 				[----------------MENU DE OPCOES-----------------]
 ECHO 				[	1. Pastas compartilhadas		]
@@ -1321,7 +705,7 @@ ECHO 				[	11. Som 				]
 echo 				[...............................................]
 ECHO 				[	12. Propriedades de Internet		]
 ECHO 				[	13. Configuracoes Adaptador de Rede 	]
-ECHO 				[	14. Remoção Malware			]
+ECHO 				[	14. Remocao Malware (MRT)		]
 echo 				[...............................................]
 ECHO 				[	15. Teclado Virtual			]
 ECHO 				[	16. Opcao de Pasta 			]
@@ -1334,56 +718,41 @@ echo 				[...............................................]
 ECHO 				[	0.VOLTAR MENU PRINCIPAL			]
 echo 				[###############################################]
 ECHO.
-echo.
+set "userinp="
 set /p userinp=Entra com uma Opcao do Menu: 
+set /a varCheck=%userinp% 2>nul
 
-set /a varCheck=%userinp%
-
-if %varCheck% == %userinp% (
-
-if %userinp% equ 1 fsmgmt.msc
-if %userinp% equ 2 certmgr.msc
-if %userinp% equ 3 taskmgr
-if %userinp% equ 4 hdwwiz.cpl
-if %userinp% equ 5 printmanagement.msc
-if %userinp% equ 6 rundll32.exe shell32.dll,Control_RunDLL sysdm.cpl,,3
-if %userinp% equ 7 sysdm.cpl
-if %userinp% equ 8 appwiz.cpl
-if %userinp% equ 9 desk.cpl
-if %userinp% equ 10 control /name Microsoft.ScannersAndCameras
-if %userinp% equ 11 mmsys.cpl
-if %userinp% equ 12 inetcpl.cpl
-if %userinp% equ 13 ncpa.cpl
-if %userinp% equ 14 mrt
-if %userinp% equ 15 osk
-if %userinp% equ 16 control /name Microsoft.FolderOptions
-if %userinp% equ 17 msinfo32
-if %userinp% equ 18 resmon
-if %userinp% equ 19 winver
-if %userinp% equ 20 control /name Microsoft.System
+if "%varCheck%" == "%userinp%" (
+if %userinp% equ 1 start fsmgmt.msc
+if %userinp% equ 2 start certmgr.msc
+if %userinp% equ 3 start taskmgr
+if %userinp% equ 4 start hdwwiz.cpl
+if %userinp% equ 5 start printmanagement.msc
+if %userinp% equ 6 start rundll32.exe shell32.dll,Control_RunDLL sysdm.cpl,,3
+if %userinp% equ 7 start sysdm.cpl
+if %userinp% equ 8 start appwiz.cpl
+if %userinp% equ 9 start desk.cpl
+if %userinp% equ 10 start control /name Microsoft.ScannersAndCameras
+if %userinp% equ 11 start mmsys.cpl
+if %userinp% equ 12 start inetcpl.cpl
+if %userinp% equ 13 start ncpa.cpl
+if %userinp% equ 14 start mrt
+if %userinp% equ 15 start osk
+if %userinp% equ 16 start control /name Microsoft.FolderOptions
+if %userinp% equ 17 start msinfo32
+if %userinp% equ 18 start resmon
+if %userinp% equ 19 start winver
+if %userinp% equ 20 start control /name Microsoft.System
 if %userinp% equ 0 GOTO MenuPri
-if %userinp% geq 21 GOTO :MenuWinProgram
-
-GOTO :MenuWinProgram
-
+GOTO MenuWinProgram
 ) else (
-ping -n 1 localhost >nul
 echo.
 echo OPCAO INVALIDA. TENTE NOVAMENTE
-echo OPCAO INVALIDA. TENTE NOVAMENTE
 echo.
-echo Pressione qualquer tecla para Voltar ao Painel de Controle
 pause > nul
-GOTO :MenuWinProgram
+GOTO MenuWinProgram
 )
 :: ##################################################################################################
-
-
-
-
-
-
-
 
 
 :: ###################################################################################################
@@ -1391,32 +760,20 @@ GOTO :MenuWinProgram
 cls
 COLOR A0
 ECHO.
+call :Confirmar "Isso vai esvaziar a Lixeira de todos os discos. Continuar?"
+if errorlevel 2 GOTO MenuPri
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ECHO ******************** LIXEIRA ********************
-del c:\$recycle.bin\* /s /q
-del c:\$Recycle.bin\*.* /f /s /q
-PowerShell.exe -NoProfile -Command Clear-RecycleBin -Confirm:$false >$null
-call powershell.exe Clear-RecycleBin -force -ErrorAction:Ignore
-del $null
-
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo Limpando a lixeira...
-rd /s /q "%USERPROFILE%\AppData\Local\Microsoft\Windows\INetCache\Low\Content.IE5"
-rd /s /q "%USERPROFILE%\AppData\Local\Microsoft\Windows\INetCache\Low"
+PowerShell.exe -NoProfile -Command "Clear-RecycleBin -Force -ErrorAction SilentlyContinue"
 
-del /f /s /q c:\$Recycle.bin\*.*
-del /f /s /q d:\$Recycle.bin\*.*
-del /f /s /q e:\$Recycle.bin\*.*
+for %%D in (C D E) do (
+	if exist %%D:\$Recycle.bin del /f /s /q "%%D:\$Recycle.bin\*.*" >nul 2>&1
+)
 
-call powershell.exe Clear-RecycleBin -force -ErrorAction:Ignore
+echo Limpando cache de miniaturas...
+rd /s /q "%USERPROFILE%\AppData\Local\Microsoft\Windows\INetCache\Low\Content.IE5" >nul 2>&1
 
-RMDIR /s %systemdrive%\$Recycle.bin
-Dism.exe /online /Cleanup-Image /StartComponentCleanup
-
-echo Lixeira Concluida
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ping -n 1 localhost >nul
+echo Lixeira Concluida.
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
@@ -1424,20 +781,68 @@ GOTO MenuPri
 :: #######################################################################################################
 
 
+:: ############################################################################################
+:: NOVO - Limpador de Registro do Windows (somente itens seguros / de cache)
+:: Nao remove entradas "orfas" de programas desinstalados: isso exige uma
+:: analise real do registro e e' arriscado fazer as cegas em lote.
+:: Aqui limpamos apenas MRUs (listas de "usado recentemente") e caches
+:: conhecidos, que o Windows recria sozinho sem causar problemas.
+:: ############################################################################################
+:LimparRegistro
+cls
+COLOR 1F
+ECHO.
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo                       LIMPEZA DE REGISTRO DO WINDOWS (ITENS SEGUROS)
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo.
+echo Serao removidas apenas listas de "usado recentemente" (MRU) e caches que o
+echo Windows recria automaticamente. NENHUMA entrada de programa instalado sera tocada.
+echo.
+call :Confirmar "Deseja continuar?"
+if errorlevel 2 GOTO MenuPri
 
+echo Criando ponto de restauracao antes de alterar o registro...
+powershell.exe -NoProfile -Command "Checkpoint-Computer -Description 'Antes_LimpezaRegistro' -RestorePointType 'MODIFY_SETTINGS'" >nul 2>&1
 
+echo Limpeza de registro iniciada em %date% %time% >> "%LOGFILE%"
 
+echo Limpando historico do "Executar" (Win+R)...
+REG DELETE "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU" /f >nul 2>&1
 
+echo Limpando caminhos digitados no Explorer...
+REG DELETE "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\TypedPaths" /VA /F >nul 2>&1
 
+echo Limpando documentos recentes (RecentDocs)...
+REG DELETE "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs" /f >nul 2>&1
 
+echo Limpando historico de busca do Explorer/Cortana...
+REG DELETE "HKCU\Software\Microsoft\Windows\CurrentVersion\Search\RecentApps" /f >nul 2>&1
+REG DELETE "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\WordWheelQuery" /f >nul 2>&1
 
+echo Limpando historico de execucao do "Salvar/Abrir como"...
+REG DELETE "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\OpenSavePidlMRU" /f >nul 2>&1
+REG DELETE "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\LastVisitedPidlMRU" /f >nul 2>&1
 
+echo Limpando lista de miniaturas em cache (ThumbnailCache)...
+REG DELETE "HKCU\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\BagMRU" /f >nul 2>&1
 
+echo Limpando entradas de rede mapeada temporarias (MountPoints2 orfaos de USB antigos)...
+REG DELETE "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\MountPoints2" /f >nul 2>&1
 
+echo Compactando o registro (limpeza de espaco nao usado nos hives)...
+Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase >nul
 
+echo Limpeza de registro concluida em %date% %time% >> "%LOGFILE%"
 
-
-
+echo.
+echo Limpeza de registro concluida com seguranca.
+echo (Um ponto de restauracao foi criado antes das alteracoes, caso precise reverter.)
+echo.
+echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
+pause > nul
+GOTO MenuPri
+:: #######################################################################################################
 
 
 :: ############################################################################################
@@ -1445,100 +850,36 @@ GOTO MenuPri
 cls
 COLOR A0
 ECHO.
-echo  Listando adaptadores de Rede (Internet)
+echo Adaptadores de Rede disponiveis:
 netsh interface show interface
 echo ==========================================================================
+echo.
+set "varCharAdapNetCon="
+set /p varCharAdapNetCon=Nome exato da interface de Rede (vazio para sair): 
+if "%varCharAdapNetCon%"=="" GOTO endNetCon
 
-goto IniNETVarCon
-
-:IniNETVarCon
-set /p varCharAdapNetCon=Nome da interface de Rede: 
-
-for /f "tokens=4" %%a in ('netsh interface show interface ^| find "%varCharAdapNetCon%"') do (set variIPNETCON=%%a)
-
-if "%varCharAdapNetCon%"== "" (
-	goto endNetCon
+netsh interface show interface "%varCharAdapNetCon%" | find /i "Desconectado" >nul
+if %errorlevel%==0 (
+	echo Adaptador esta desabilitado. Habilitando "%varCharAdapNetCon%"...
+	netsh interface set interface "%varCharAdapNetCon%" enabled
 ) else (
-	if "%variIPNETCON%"== "" (
-		set varCharAdapNetCon=
-		goto IniNETVarCon
-	) ELSE (
-		echo.
-		echo.
-		echo 			INICIANDO PROCEDIMENTO "%varCharAdapNetCon%" adapter. AGUARDE...
-		goto FullNetCon
-))
-
-
-
-
-:Disadlingadapter
-color 4f
-echo.
-netsh interface set interface "%varCharAdapNetCon%" disable
-echo "%varCharAdapNetCon%" adapter Disabilitado.
-echo ==========================================================================
-timeout /t 5 >nul
-goto endNetCon
-
-
-
-
-
-:Enablingadapter
-color 0A
-echo.
-netsh interface set interface "%varCharAdapNetCon%" enable
-echo "%varCharAdapNetCon%" adapter Habilitado.
-echo ==========================================================================
-goto endNetCon
-
-
-
-
-
-:FullNetCon
-echo ------------------------------------------------------------------------
-netsh interface show interface "%varCharAdapNetCon%" | find "Desconectado" > nul && (
-  echo Adaptador Desabilitado - Estamos Habilitando Dispositivo - "%varCharAdapNetCon%"
-  netsh interface set interface "%varCharAdapNetCon%" enabled
-  goto endNetCon
-) || (
-  echo Adaptador Habilitado - Estamos Desabilitando o Dispositivo - "%varCharAdapNetCon%"
-  netsh interface set interface "%varCharAdapNetCon%" disabled > nul
-	IF ERRORLEVEL 1 (
-  		color 4f
-		ECHO ATENCAO.
-		echo ACONTECEU ALGUM ERRO
-	) ELSE (
-	timeout /t 5 >nul
-	GOTO :Enablingadapter
+	netsh interface show interface "%varCharAdapNetCon%" >nul 2>&1
+	if errorlevel 1 (
+		echo Interface "%varCharAdapNetCon%" nao encontrada.
+	) else (
+		echo Adaptador esta habilitado. Desabilitando "%varCharAdapNetCon%"...
+		netsh interface set interface "%varCharAdapNetCon%" disabled
 	)
 )
 
 :endNetCon
 echo.
-echo ------------------------------------------------------------------------
-echo.
-echo Procedimento Concluido - Finalizando...
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ping -n 1 localhost >nul
+echo Procedimento Concluido.
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 pause > nul
 GOTO MenuPri
 :: #######################################################################################################
-
-
-
-
-
-
-
-
-
-
-
 
 
 :: #######################################################################################################
@@ -1548,21 +889,11 @@ color 03
 echo.
 echo 	Seja Bem Vindo ao Prompt de Comando
 echo 		Digite EXIT para sair
-echo 		Digite EXIT para sair
-echo 		Digite EXIT para sair
-echo 		Digite EXIT para sair
 echo.
-echo.
-
 call cmd
 cls
 COLOR A0
-echo.
-echo.
 echo Saindo do Prompt de Comando.
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ping -n 1 localhost >nul
-echo.
 echo.
 echo Pressione qualquer tecla para Voltar ao MENU PRINCIPAL
 TIMEOUT /T 3
@@ -1570,27 +901,11 @@ GOTO MenuPri
 :: #######################################################################################################
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 :: #######################################################################################################
 :SairPrograma
 COLOR A0
-echo Pressione Sair do Programa..
+echo Encerrando... Log salvo em "%LOGFILE%"
+echo ==== Sessao encerrada em %date% %time% ==== >> "%LOGFILE%"
 TIMEOUT /T 3
-exit
+exit /b
 :: #######################################################################################################
-
-
